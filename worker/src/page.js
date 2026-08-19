@@ -18,16 +18,18 @@ export function getPageHtml() {
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"><\/script>
 <style>
-:root { --blue:#007aff; --green:#34c759; --red:#ff3b30; --gray:#8e8e93; --bg:#f6f8ff; --orange:#ff9500; --tg:#229ED9; --card:rgba(255,255,255,.58); --stroke:rgba(255,255,255,.72); --shadow:0 12px 32px rgba(58,86,160,.10); --glass-blur:10px; }
+:root { --blue:#1677c8; --green:#34c759; --red:#ff3b30; --gray:#7b8794; --bg:#edf5e9; --orange:#ff9500; --tg:#229ED9; --card:rgba(255,255,255,.78); --stroke:rgba(255,255,255,.86); --shadow:0 18px 42px rgba(64,98,72,.16),0 2px 8px rgba(255,255,255,.62) inset; --lift-shadow:0 10px 24px rgba(58,88,64,.14); }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:radial-gradient(circle at 18% 8%,rgba(0,122,255,.16),transparent 30%),radial-gradient(circle at 84% 18%,rgba(88,86,214,.13),transparent 28%),radial-gradient(circle at 50% 72%,rgba(255,255,255,.72),transparent 34%),linear-gradient(160deg,#f9fbff 0%,#edf4ff 50%,#f7f4ff 100%); color:#1c1c1e; min-height:100vh; }
+html { background:#dfeeda; scroll-behavior:auto; }
+body { position:relative; overflow-x:hidden; font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:linear-gradient(145deg,#eef8e9 0%,#dcecd6 46%,#eff6df 100%); color:#1c1c1e; min-height:100vh; }
+body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; background:radial-gradient(ellipse at 18% 8%,rgba(164,210,151,.42),transparent 34%),radial-gradient(ellipse at 84% 18%,rgba(123,187,156,.32),transparent 30%),radial-gradient(ellipse at 50% 88%,rgba(255,246,206,.38),transparent 38%),linear-gradient(145deg,rgba(255,255,255,.32),transparent 45%); transform:translateZ(0); }
 #map { height:50vh; width:100%; min-height:250px; }
 .panel { padding:16px; max-width:600px; margin:0 auto; }
-.card { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,255,255,.46)); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); backdrop-filter:blur(var(--glass-blur)) saturate(1.15); -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.15); contain:paint; }
-.card::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.58),transparent 42%),radial-gradient(circle at 18% 0%,rgba(255,255,255,.55),transparent 30%); opacity:.72; }
+.card { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(236,247,229,.72)); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); contain:layout paint style; transform:translateZ(0); }
+.card::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.82),transparent 38%),radial-gradient(circle at 16% 0%,rgba(255,255,255,.7),transparent 28%),linear-gradient(315deg,rgba(119,164,105,.12),transparent 42%); opacity:.9; }
 .card > * { position:relative; z-index:1; }
 .card h3 { font-size:15px; font-weight:700; margin-bottom:10px; color:#1c1c1e; letter-spacing:.01em; }
-.coords { font-family:"SF Mono",monospace; font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(248,251,255,.54)); border:1px solid rgba(255,255,255,.7); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.74); }
+.coords { font-family:"SF Mono",monospace; font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(236,247,229,.68)); border:1px solid rgba(255,255,255,.82); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 6px 16px rgba(72,112,76,.08); }
 .row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
 .action-card { padding:12px; }
 .action-row { display:flex; gap:8px; flex-wrap:nowrap; margin-top:0; }
@@ -35,13 +37,13 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .btn { flex:1; min-width:100px; padding:12px 16px; border:none; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease,filter .12s ease,box-shadow .12s ease; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; text-align:center; box-shadow:0 6px 14px rgba(32,68,138,.10); touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
 .btn:active { transform:translateY(1px) scale(.985); filter:brightness(.96); box-shadow:0 3px 8px rgba(32,68,138,.10); }
 .btn-primary { background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; }
-.btn-secondary { background:linear-gradient(135deg,rgba(255,255,255,.76),rgba(241,246,255,.58)); color:#263248; border:1px solid rgba(255,255,255,.78); }
+.btn-secondary { background:linear-gradient(135deg,rgba(255,255,255,.76),rgba(232,246,225,.68)); color:#263248; border:1px solid rgba(255,255,255,.78); }
 .btn-danger { background:linear-gradient(135deg,#ff6b61,#ff4f72); color:#fff; }
 .btn-tg { background:linear-gradient(135deg,#229ED9,#1677b8); color:#fff; }
 .btn.success { background:var(--green); color:#fff; }
 .btn-sm { flex:none; min-width:auto; padding:6px 12px; font-size:12px; border-radius:8px; }
 .input-row { display:flex; gap:8px; margin-top:10px; }
-.input-row input { flex:1; padding:11px 12px; border:1px solid rgba(255,255,255,.78); border-radius:12px; font-size:14px; outline:none; min-width:0; background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(248,251,255,.68)); color:#1c1c1e; box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 4px 12px rgba(32,68,138,.05); transition:border-color .12s ease,box-shadow .12s ease; }
+.input-row input { flex:1; padding:11px 12px; border:1px solid rgba(255,255,255,.78); border-radius:12px; font-size:14px; outline:none; min-width:0; background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(238,248,231,.72)); color:#1c1c1e; box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 4px 12px rgba(32,68,138,.05); transition:border-color .12s ease,box-shadow .12s ease; }
 .input-row input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .status { font-size:12px; color:var(--gray); margin-top:8px; text-align:center; }
 .error-banner { background:var(--red); color:#fff; padding:14px 16px; border-radius:12px; margin-bottom:12px; font-size:14px; line-height:1.5; display:none; }
@@ -51,12 +53,14 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .active-loc { background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(247,250,255,.54)); border:1px solid rgba(255,255,255,.7); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; }
 .active-loc .label { font-size:11px; color:var(--gray); margin-bottom:4px; }
 .active-loc .value { font-family:"SF Mono",monospace; font-size:13px; }
+.active-loc .value.coords-line { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.active-loc .value .coord-meta { color:var(--gray); }
 .fav-list { max-height:240px; overflow-y:auto; }
-.fav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(248,251,255,.56)); border:1px solid rgba(255,255,255,.68); border-radius:12px; margin-bottom:6px; cursor:pointer; transition:filter .12s ease,transform .12s ease; }
+.fav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(238,248,231,.68)); border:1px solid rgba(255,255,255,.68); border-radius:12px; margin-bottom:6px; cursor:pointer; transition:filter .12s ease,transform .12s ease; }
 .fav-item:active { transform:translateY(1px); filter:brightness(.97); }
 .fav-item .fav-info { flex:1; min-width:0; }
 .fav-item .fav-name { font-size:14px; font-weight:500; color:#333; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fav-item .fav-coords { font-size:11px; color:var(--gray); font-family:"SF Mono",monospace; margin-top:2px; }
+.fav-item .fav-coords { font-size:11px; color:var(--gray); font-family:"SF Mono",monospace; margin-top:2px; display:flex; gap:10px; align-items:center; }
 .fav-item .fav-active { font-size:10px; color:var(--green); font-weight:600; }
 .fav-item .fav-del { flex:none; width:28px; height:28px; border:none; border-radius:50%; background:transparent; color:var(--red); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
 .fav-item .fav-del:hover { background:rgba(255,59,48,.1); }
@@ -65,13 +69,13 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .fav-header h3 { margin-bottom:0; }
 .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(15,23,42,.36); z-index:10000; display:none; align-items:center; justify-content:center; padding:20px; }
 .modal-overlay.show { display:flex; }
-.modal { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(244,248,255,.68)); border:1px solid rgba(255,255,255,.78); border-radius:24px; padding:22px; width:100%; max-width:340px; box-shadow:0 22px 58px rgba(15,23,42,.22); backdrop-filter:blur(14px) saturate(1.15); -webkit-backdrop-filter:blur(14px) saturate(1.15); }
+.modal { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(235,247,229,.82)); border:1px solid rgba(255,255,255,.84); border-radius:24px; padding:22px; width:100%; max-width:340px; box-shadow:0 22px 58px rgba(36,58,40,.24); }
 .modal::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.65),transparent 44%),radial-gradient(circle at 20% 0%,rgba(0,122,255,.12),transparent 34%); }
 .modal > * { position:relative; z-index:1; }
 .modal-icon { width:46px; height:46px; border-radius:16px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; box-shadow:0 10px 24px rgba(0,122,255,.20); font-size:24px; }
 .modal h3 { font-size:18px; font-weight:700; margin-bottom:10px; text-align:center; color:#1c1c1e; }
 .modal-desc { font-size:14px; line-height:1.55; color:#4b5563; text-align:center; margin-bottom:18px; }
-.modal input { width:100%; padding:12px; border:1px solid rgba(255,255,255,.78); border-radius:14px; font-size:15px; outline:none; margin-bottom:12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(248,251,255,.7)); box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+.modal input { width:100%; padding:12px; border:1px solid rgba(255,255,255,.78); border-radius:14px; font-size:15px; outline:none; margin-bottom:12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(238,248,231,.74)); box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
 .modal input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .modal .modal-btns { display:flex; gap:10px; }
 .modal .modal-btns .btn { padding:12px; min-width:0; }
@@ -91,7 +95,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .target-pin .pin-fill { fill:url(#target-pin-red); }
 .target-pin .pin-core { fill:#fff; }
 .target-pin .pin-center { fill:#ff453a; }
-@media(max-width:480px) { :root { --glass-blur:7px; --shadow:0 8px 18px rgba(58,86,160,.08); } #map { height:44vh; } .panel { padding:12px; } .card { border-radius:16px; padding:14px; } .action-card { padding:10px; } .action-row { gap:6px; } .action-row .btn { padding:11px 4px; } .layer-btn { padding:5px 7px; font-size:11px; } }
+@media(max-width:480px) { :root { --shadow:0 10px 22px rgba(64,98,72,.13),0 1px 6px rgba(255,255,255,.58) inset; } #map { height:44vh; } .panel { padding:12px; } .card { border-radius:16px; padding:14px; } .action-card { padding:10px; } .action-row { gap:6px; } .action-row .btn { padding:11px 4px; } .layer-btn { padding:5px 7px; font-size:11px; } }
 </style>
 </head>
 <body>
@@ -304,7 +308,7 @@ function renderFavs() {
     return '<div class="fav-item" onclick="loadFav(' + i + ')">' +
       '<div class="fav-info">' +
         '<div class="fav-name">' + escHtml(f.name) + '<\\/div>' +
-        '<div class="fav-coords">' + f.lon.toFixed(6) + ', ' + f.lat.toFixed(6) + '<\\/div>' +
+        '<div class="fav-coords"><span>' + f.lon.toFixed(6) + '<\/span><span>' + f.lat.toFixed(6) + '<\/span><\/div>' +
         (isActive ? '<div class="fav-active">\\u2713 当前生效<\\/div>' : '') +
       '<\\/div>' +
       '<button class="fav-del" onclick="event.stopPropagation();delFav(' + i + ')" title="删除">\\u00d7<\\/button>' +
@@ -375,9 +379,21 @@ async function clearAllFav() {
 }
 
 /* ---- Active location query ---- */
-function queryActive() {
+function setActiveCoords(lo, la, opts) {
   const el = document.getElementById('activeValue');
-  el.textContent = '查询中...';
+  const accuracy = opts && opts.accuracy ? '<span class="coord-meta">精度 ' + opts.accuracy + 'm<\/span>' : '';
+  const randomRadius = opts && opts.randomRadius ? '<span class="coord-meta">扰动 ' + opts.randomRadius + 'm<\/span>' : '';
+  el.className = 'value coords-line';
+  el.innerHTML = '<span>经度 ' + lo.toFixed(6) + '<\/span><span>纬度 ' + la.toFixed(6) + '<\/span>' + accuracy + randomRadius;
+}
+function setActiveText(text) {
+  const el = document.getElementById('activeValue');
+  el.className = 'value';
+  el.textContent = text;
+}
+
+function queryActive() {
+  setActiveText('查询中...');
   fetch(SAVE_API + '?action=query', { method:'GET', mode:'cors', cache:'no-store' })
     .then(r => r.json())
     .then(d => {
@@ -385,17 +401,17 @@ function queryActive() {
         activeLon = parseFloat(d.longitude);
         activeLat = parseFloat(d.latitude);
         const rr = d.randomRadius || 0;
-        el.textContent = '经度 ' + activeLon.toFixed(6) + '  纬度 ' + activeLat.toFixed(6) + (d.accuracy ? '  精度 ' + d.accuracy + 'm' : '') + (rr ? '  扰动 ' + rr + 'm' : '');
+        setActiveCoords(activeLon, activeLat, { accuracy: d.accuracy, randomRadius: rr });
         document.getElementById('radiusInput').value = rr;
         renderFavs();
       } else {
         activeLon = null; activeLat = null;
-        el.textContent = '无已保存的坐标';
+        setActiveText('无已保存的坐标');
         renderFavs();
       }
     })
     .catch(() => {
-      el.textContent = '查询结果';
+      setActiveText('查询结果');
     });
 }
 
@@ -406,7 +422,7 @@ async function clearActive() {
     .then(d => {
       if (d.success) {
         activeLon = null; activeLat = null;
-        document.getElementById('activeValue').textContent = '已清除';
+        setActiveText('已清除');
         renderFavs();
         toast('已清除设备坐标');
       } else { toast('清除失败: ' + (d.error || ''), 3000); }
@@ -430,7 +446,7 @@ async function save() {
       activeLon = lon; activeLat = lat;
       btn.textContent = '\\u2713 已保存'; btn.className = 'btn btn-primary success';
       document.getElementById('status').textContent = '\\u2713 已写入: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
-      document.getElementById('activeValue').textContent = '经度 ' + lon.toFixed(6) + '  纬度 ' + lat.toFixed(6) + '  精度 25m';
+      setActiveCoords(lon, lat, { accuracy: 25 });
       renderFavs();
       toast('\\u2713 坐标已写入设备');
       setTimeout(() => { btn.textContent='保存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
