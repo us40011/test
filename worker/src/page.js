@@ -18,19 +18,23 @@ export function getPageHtml() {
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"><\/script>
 <style>
-:root { --blue:#007aff; --green:#34c759; --red:#ff3b30; --gray:#8e8e93; --bg:#f2f2f7; --orange:#ff9500; --tg:#229ED9; }
+:root { --blue:#007aff; --green:#34c759; --red:#ff3b30; --gray:#8e8e93; --bg:#eef3ff; --orange:#ff9500; --tg:#229ED9; --card:rgba(255,255,255,.78); --stroke:rgba(255,255,255,.72); --shadow:0 18px 45px rgba(32,68,138,.14); }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:var(--bg); }
+body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:linear-gradient(160deg,#dceaff 0%,#f2e9ff 42%,#eaf7f2 100%); color:#1c1c1e; min-height:100vh; }
+body::before { content:""; position:fixed; inset:0; pointer-events:none; background:radial-gradient(circle at 12% 8%,rgba(0,122,255,.20),transparent 32%),radial-gradient(circle at 88% 18%,rgba(88,86,214,.18),transparent 28%),radial-gradient(circle at 50% 92%,rgba(52,199,89,.14),transparent 34%); z-index:-1; }
 #map { height:50vh; width:100%; min-height:250px; }
 .panel { padding:16px; max-width:600px; margin:0 auto; }
-.card { background:#fff; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
-.card h3 { font-size:15px; font-weight:600; margin-bottom:10px; }
-.coords { font-family:"SF Mono",monospace; font-size:14px; color:#333; padding:8px 12px; background:var(--bg); border-radius:8px; word-break:break-all; }
+.card { background:var(--card); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2); }
+.card h3 { font-size:15px; font-weight:700; margin-bottom:10px; color:#1c1c1e; letter-spacing:.01em; }
+.coords { font-family:"SF Mono",monospace; font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(243,247,255,.72)); border:1px solid rgba(255,255,255,.75); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.72); }
 .row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-.btn { flex:1; min-width:100px; padding:12px 16px; border:none; border-radius:10px; font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; text-align:center; }
-.btn-primary { background:var(--blue); color:#fff; }
+.action-card { padding:12px; }
+.action-row { display:flex; gap:8px; flex-wrap:nowrap; margin-top:0; }
+.action-row .btn { min-width:0; padding:12px 8px; font-size:clamp(12px,3.35vw,14px); white-space:nowrap; }
+.btn { flex:1; min-width:100px; padding:12px 16px; border:none; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; transition:all .15s; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; text-align:center; box-shadow:0 8px 18px rgba(32,68,138,.10); }
+.btn-primary { background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; }
 .btn-primary:active { background:#005bb5; transform:scale(.97); }
-.btn-secondary { background:#e5e5ea; color:#333; }
+.btn-secondary { background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(232,239,255,.86)); color:#263248; border:1px solid rgba(255,255,255,.78); }
 .btn-secondary:active { background:#d1d1d6; transform:scale(.97); }
 .btn-danger { background:var(--red); color:#fff; }
 .btn-danger:active { background:#d63027; transform:scale(.97); }
@@ -39,18 +43,18 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .btn.success { background:var(--green); color:#fff; }
 .btn-sm { flex:none; min-width:auto; padding:6px 12px; font-size:12px; border-radius:8px; }
 .input-row { display:flex; gap:8px; margin-top:10px; }
-.input-row input { flex:1; padding:10px 12px; border:1px solid #d1d1d6; border-radius:8px; font-size:14px; outline:none; min-width:0; }
-.input-row input:focus { border-color:var(--blue); }
+.input-row input { flex:1; padding:11px 12px; border:1px solid rgba(255,255,255,.78); border-radius:12px; font-size:14px; outline:none; min-width:0; background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(244,248,255,.84)); color:#1c1c1e; box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 18px rgba(32,68,138,.08); }
+.input-row input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .status { font-size:12px; color:var(--gray); margin-top:8px; text-align:center; }
 .error-banner { background:var(--red); color:#fff; padding:14px 16px; border-radius:12px; margin-bottom:12px; font-size:14px; line-height:1.5; display:none; }
 .error-banner b { display:block; margin-bottom:4px; }
 .toast { position:fixed; top:60px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.8); color:#fff; padding:10px 20px; border-radius:20px; font-size:14px; opacity:0; transition:opacity .3s; pointer-events:none; z-index:9999; max-width:90vw; text-align:center; }
 .toast.show { opacity:1; }
-.active-loc { background:var(--bg); border-radius:8px; padding:10px 12px; font-size:13px; color:#333; }
+.active-loc { background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(243,247,255,.72)); border:1px solid rgba(255,255,255,.75); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; }
 .active-loc .label { font-size:11px; color:var(--gray); margin-bottom:4px; }
 .active-loc .value { font-family:"SF Mono",monospace; font-size:13px; }
 .fav-list { max-height:240px; overflow-y:auto; }
-.fav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; background:var(--bg); border-radius:8px; margin-bottom:6px; cursor:pointer; transition:background .15s; }
+.fav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(243,247,255,.68)); border:1px solid rgba(255,255,255,.72); border-radius:12px; margin-bottom:6px; cursor:pointer; transition:background .15s; }
 .fav-item:active { background:#e0e0e5; }
 .fav-item .fav-info { flex:1; min-width:0; }
 .fav-item .fav-name { font-size:14px; font-weight:500; color:#333; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -81,7 +85,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .target-pin .pin-fill { fill:url(#target-pin-red); }
 .target-pin .pin-core { fill:#fff; }
 .target-pin .pin-center { fill:#ff453a; }
-@media(max-width:480px) { #map { height:44vh; } .panel { padding:12px; } .layer-btn { padding:5px 7px; font-size:11px; } }
+@media(max-width:480px) { #map { height:44vh; } .panel { padding:12px; } .card { border-radius:16px; padding:14px; } .action-card { padding:10px; } .action-row { gap:6px; } .action-row .btn { padding:11px 4px; } .layer-btn { padding:5px 7px; font-size:11px; } }
 </style>
 </head>
 <body>
@@ -112,7 +116,9 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
         <input id="radiusInput" type="number" min="0" max="5000" step="1" value="0" style="width:80px;flex:none" />
       </label>
     </div>
-    <div class="row">
+  </div>
+  <div class="card action-card" aria-label="位置操作">
+    <div class="action-row">
       <button class="btn btn-primary" id="saveBtn" onclick="save()">保存到设备</button>
       <button class="btn btn-secondary" onclick="addFav()">收藏位置</button>
       <button class="btn btn-secondary" onclick="locateMe()">当前位置</button>
@@ -142,7 +148,6 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <input id="urlInput" placeholder="Apple/高德 > 链接/经纬度" />
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="parseUrl()">解析</button>
     </div>
-    <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple · Google · 高德 · 百度</div>
   </div>
   <div class="card">
     <h3>搜索地点</h3>
@@ -467,14 +472,14 @@ async function parseUrl() {
       return;
     }
     moveTo(data.lat, data.lon, 15);
-    toast(data.name ? '已解析: ' + data.name : '已解析: ' + data.lon.toFixed(4) + ', ' + data.lat.toFixed(4));
+    toast(data.name ? '📍 ' + data.name : '📍 ' + data.lon.toFixed(4) + ', ' + data.lat.toFixed(4));
     return;
   }
 
   const result = parseMapUrl(input);
   if (!result) { toast('无法解析坐标，请检查链接格式', 3000); return; }
   moveTo(result.lat, result.lon, 15);
-  toast('已解析: ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
+  toast('📍 ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
 }
 
 async function searchPlace() {
@@ -499,10 +504,8 @@ document.addEventListener('paste', e => {
   // 粘贴目标本来就是这个输入框时, 让浏览器原生插入即可; 此处再赋一次值,
   // 原生插入会叠加在后面, 结果是同一段文本出现两遍。
   if (e.target !== input) input.value = text;
-  setTimeout(parseUrl, 200);
 });
 document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') searchPlace(); });
-document.getElementById('urlInput').addEventListener('keydown', e => { if(e.key==='Enter') parseUrl(); });
 document.getElementById('favNameInput').addEventListener('keydown', e => { if(e.key==='Enter') confirmFav(); });
 
 renderFavs();
