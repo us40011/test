@@ -90,10 +90,10 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
   <div class="error-banner" id="errorBanner">
     <b>模块未生效</b>
     请检查以下配置：<br>
-    1. 已安装并启用 WLOC 定位模块<br>
-    2. MITM 已开启且信任证书<br>
-    3. MITM 主机名包含 gs-loc.apple.com<br>
-    4. 当前网络已走代理
+    1. 已安装并启用Apple New模块<br>
+    2. 已开启且信任CA证书<br>
+    3. 主机名包含gs-loc.apple.com<br>
+    4. VPN软件已连接
   </div>
   <div class="card">
     <h3>选择目标位置</h3>
@@ -129,17 +129,17 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
     </div>
   </div>
   <div class="card">
-    <h3>粘贴地图链接</h3>
+    <h3>地图共享坐标</h3>
     <div class="input-row">
-      <input id="urlInput" placeholder="Apple/Google/高德地图链接 或 经纬度" />
+      <input id="urlInput" placeholder="Apple/高德 > 链接/经纬度" />
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="parseUrl()">解析</button>
     </div>
-    <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple Maps · Google Maps · 高德 · 百度 · 坐标文本</div>
+    <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple · Google · 高德 · 百度</div>
   </div>
   <div class="card">
     <h3>搜索地点</h3>
     <div class="input-row">
-      <input id="searchInput" placeholder="输入地名（如: 上海外滩）" />
+      <input id="searchInput" placeholder="输入地名 例如: 美国纽约" />
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="searchPlace()">搜索</button>
     </div>
   </div>
