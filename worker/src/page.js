@@ -142,7 +142,6 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <input id="urlInput" placeholder="Apple/高德 > 链接/经纬度" />
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="parseUrl()">解析</button>
     </div>
-    <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple · Google · 高德 · 百度</div>
   </div>
   <div class="card">
     <h3>搜索地点</h3>
