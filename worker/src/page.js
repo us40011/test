@@ -451,7 +451,7 @@ function parseMapUrl(text) {
 // 纯坐标文本本地直接解析 —— 它也是唯一不需要坐标系换算的输入, 免去一次往返。
 async function parseUrl() {
   const input = document.getElementById('urlInput').value.trim();
-  if (!input) return toast('请粘贴地图链接或坐标');
+  if (!input) return toast('⭐请粘贴链接或坐标');
 
   const low = input.toLowerCase();
   if (low.includes('http://') || low.includes('https://')) {
@@ -465,7 +465,7 @@ async function parseUrl() {
       return;
     }
     if (!data || data.error || typeof data.lat !== 'number') {
-      toast(data && data.error ? data.error : '无法解析坐标，请检查链接格式', 3000);
+      toast(data && data.error ? data.error : '⭐ 请检查格式', 3000);
       return;
     }
     moveTo(data.lat, data.lon, 15);
@@ -474,14 +474,14 @@ async function parseUrl() {
   }
 
   const result = parseMapUrl(input);
-  if (!result) { toast('无法解析坐标，请检查链接格式', 3000); return; }
+  if (!result) { toast('⭐ 请检查格式', 3000); return; }
   moveTo(result.lat, result.lon, 15);
   toast('📍 ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
 }
 
 async function searchPlace() {
   const q = document.getElementById('searchInput').value.trim();
-  if (!q) return toast('请输入地名');
+  if (!q) return toast('⭐ 请输入地名');
   toast('搜索中...');
   try {
     const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q));
