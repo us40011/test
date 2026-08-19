@@ -401,7 +401,7 @@ async function save() {
       document.getElementById('status').textContent = '\\u2713 已写入: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
       document.getElementById('activeValue').textContent = '经度 ' + lon.toFixed(6) + '  纬度 ' + lat.toFixed(6) + '  精度 25m';
       renderFavs();
-      toast('\\u2713 坐标已写入设备，下次定位生效');
+      toast('\\u2713 坐标已写入设备');
       setTimeout(() => { btn.textContent='保存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
     } else {
       throw new Error(d.error || '写入失败');
@@ -409,7 +409,7 @@ async function save() {
   } catch(e) {
     btn.textContent = '保存到设备'; btn.className = 'btn btn-primary'; btn.disabled = false;
     showError(true);
-    toast('\\u2717 储存失败 - 请检查模块配置', 4000);
+    toast('\\u2717 保存失败', 4000);
   }
 }
 
