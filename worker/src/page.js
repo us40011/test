@@ -152,7 +152,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
     </div>
   </div>
   <div class="card footer-card">
-    <img class="footer-logo" id="footerLogo" src="https://raw.githubusercontent.com/us40011/AppleNEW/main/gps.png" alt="Logo" onerror="this.onerror=null; this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';">
+    <img class="footer-logo" id="footerLogo" src="https://raw.githubusercontent.com/us40011/test/main/gps.png" alt="Logo" onerror="this.onerror=null; this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';">
     <div id="fallbackLogo" style="display:none; width:96px; height:96px; border-radius:20px; margin:0 auto 12px; background:linear-gradient(135deg, #007aff, #5856d6); box-shadow:0 4px 16px rgba(0, 122, 255, 0.25); align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:22px;">W</div>
     <div style="font-weight:600;font-size:15px;color:#1c1c1e;margin-bottom:4px">澳门银河科技</div>
     <div style="font-size:12px;color:var(--gray);margin-bottom:14px;font-family:monospace;font-weight:700;">2026-08</div>
