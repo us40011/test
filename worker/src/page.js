@@ -53,12 +53,14 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .active-loc { background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(247,250,255,.54)); border:1px solid rgba(255,255,255,.7); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; }
 .active-loc .label { font-size:11px; color:var(--gray); margin-bottom:4px; }
 .active-loc .value { font-family:"SF Mono",monospace; font-size:13px; }
+.active-loc .value.coords-line { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.active-loc .value .coord-meta { color:var(--gray); }
 .fav-list { max-height:240px; overflow-y:auto; }
 .fav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(238,248,231,.68)); border:1px solid rgba(255,255,255,.68); border-radius:12px; margin-bottom:6px; cursor:pointer; transition:filter .12s ease,transform .12s ease; }
 .fav-item:active { transform:translateY(1px); filter:brightness(.97); }
 .fav-item .fav-info { flex:1; min-width:0; }
 .fav-item .fav-name { font-size:14px; font-weight:500; color:#333; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fav-item .fav-coords { font-size:11px; color:var(--gray); font-family:"SF Mono",monospace; margin-top:2px; }
+.fav-item .fav-coords { font-size:11px; color:var(--gray); font-family:"SF Mono",monospace; margin-top:2px; display:flex; gap:10px; align-items:center; }
 .fav-item .fav-active { font-size:10px; color:var(--green); font-weight:600; }
 .fav-item .fav-del { flex:none; width:28px; height:28px; border:none; border-radius:50%; background:transparent; color:var(--red); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
 .fav-item .fav-del:hover { background:rgba(255,59,48,.1); }
@@ -306,7 +308,7 @@ function renderFavs() {
     return '<div class="fav-item" onclick="loadFav(' + i + ')">' +
       '<div class="fav-info">' +
         '<div class="fav-name">' + escHtml(f.name) + '<\\/div>' +
-        '<div class="fav-coords">' + f.lon.toFixed(6) + ', ' + f.lat.toFixed(6) + '<\\/div>' +
+        '<div class="fav-coords"><span>' + f.lon.toFixed(6) + '<\/span><span>' + f.lat.toFixed(6) + '<\/span><\/div>' +
         (isActive ? '<div class="fav-active">\\u2713 当前生效<\\/div>' : '') +
       '<\\/div>' +
       '<button class="fav-del" onclick="event.stopPropagation();delFav(' + i + ')" title="删除">\\u00d7<\\/button>' +
@@ -377,9 +379,21 @@ async function clearAllFav() {
 }
 
 /* ---- Active location query ---- */
-function queryActive() {
+function setActiveCoords(lo, la, opts) {
   const el = document.getElementById('activeValue');
-  el.textContent = '查询中...';
+  const accuracy = opts && opts.accuracy ? '<span class="coord-meta">精度 ' + opts.accuracy + 'm<\/span>' : '';
+  const randomRadius = opts && opts.randomRadius ? '<span class="coord-meta">扰动 ' + opts.randomRadius + 'm<\/span>' : '';
+  el.className = 'value coords-line';
+  el.innerHTML = '<span>经度 ' + lo.toFixed(6) + '<\/span><span>纬度 ' + la.toFixed(6) + '<\/span>' + accuracy + randomRadius;
+}
+function setActiveText(text) {
+  const el = document.getElementById('activeValue');
+  el.className = 'value';
+  el.textContent = text;
+}
+
+function queryActive() {
+  setActiveText('查询中...');
   fetch(SAVE_API + '?action=query', { method:'GET', mode:'cors', cache:'no-store' })
     .then(r => r.json())
     .then(d => {
@@ -387,17 +401,17 @@ function queryActive() {
         activeLon = parseFloat(d.longitude);
         activeLat = parseFloat(d.latitude);
         const rr = d.randomRadius || 0;
-        el.textContent = '经度 ' + activeLon.toFixed(6) + '  纬度 ' + activeLat.toFixed(6) + (d.accuracy ? '  精度 ' + d.accuracy + 'm' : '') + (rr ? '  扰动 ' + rr + 'm' : '');
+        setActiveCoords(activeLon, activeLat, { accuracy: d.accuracy, randomRadius: rr });
         document.getElementById('radiusInput').value = rr;
         renderFavs();
       } else {
         activeLon = null; activeLat = null;
-        el.textContent = '无已保存的坐标';
+        setActiveText('无已保存的坐标');
         renderFavs();
       }
     })
     .catch(() => {
-      el.textContent = '查询结果';
+      setActiveText('查询结果');
     });
 }
 
@@ -408,7 +422,7 @@ async function clearActive() {
     .then(d => {
       if (d.success) {
         activeLon = null; activeLat = null;
-        document.getElementById('activeValue').textContent = '已清除';
+        setActiveText('已清除');
         renderFavs();
         toast('已清除设备坐标');
       } else { toast('清除失败: ' + (d.error || ''), 3000); }
@@ -432,7 +446,7 @@ async function save() {
       activeLon = lon; activeLat = lat;
       btn.textContent = '\\u2713 已保存'; btn.className = 'btn btn-primary success';
       document.getElementById('status').textContent = '\\u2713 已写入: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
-      document.getElementById('activeValue').textContent = '经度 ' + lon.toFixed(6) + '  纬度 ' + lat.toFixed(6) + '  精度 25m';
+      setActiveCoords(lon, lat, { accuracy: 25 });
       renderFavs();
       toast('\\u2713 坐标已写入设备');
       setTimeout(() => { btn.textContent='保存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
