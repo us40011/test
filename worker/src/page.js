@@ -99,7 +99,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 <div class="panel">
   <div class="error-banner" id="errorBanner">
     <b>定位没有成功生效</b>
-    请检查以下配置：<br>
+    请检查以下配置<br>
     1. 已启用Apple New模块<br>
     2. 已信任CA证书<br>
     3. VPN软件已连接
@@ -276,7 +276,7 @@ function renderFavs() {
   const clearBtn = document.getElementById('clearAllBtn');
   clearBtn.style.display = favs.length ? '' : 'none';
   if (!favs.length) {
-    el.innerHTML = '<div class="fav-empty">暂无收藏，选好位置后点击「收藏位置」</div>';
+    el.innerHTML = '<div class="fav-empty">「暂无坐标」</div>';
     return;
   }
   el.innerHTML = favs.map((f, i) => {
