@@ -107,7 +107,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 <div class="panel">
   <div class="error-banner" id="errorBanner">
     <b>定位没有成功生效</b>
-    请检查以下配置：<br>
+    请检查以下配置<br>
     1. 已启用Apple New模块<br>
     2. 已信任CA证书<br>
     3. VPN软件已连接
@@ -174,7 +174,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
   <div class="modal">
     <div class="modal-icon">📍</div>
     <h3>收藏此位置</h3>
-    <input id="favNameInput" placeholder="输入备注名称（如: 公司、家）" maxlength="30" />
+    <input id="favNameInput" placeholder="输入备注名称" maxlength="30" />
     <div style="font-size:12px;color:var(--gray);margin-bottom:12px;text-align:center" id="favModalCoords"></div>
     <div class="modal-btns">
       <button class="btn btn-secondary" onclick="closeFavModal()">取消</button>
@@ -296,7 +296,7 @@ function renderFavs() {
   const clearBtn = document.getElementById('clearAllBtn');
   clearBtn.style.display = favs.length ? '' : 'none';
   if (!favs.length) {
-    el.innerHTML = '<div class="fav-empty">暂无收藏，选好位置后点击「收藏位置」</div>';
+    el.innerHTML = '<div class="fav-empty">「暂无坐标」</div>';
     return;
   }
   el.innerHTML = favs.map((f, i) => {
@@ -317,7 +317,7 @@ function escHtml(s) {
 }
 
 function addFav() {
-  if (!selected) { toast('请先在地图上选择一个位置'); return; }
+  if (!selected) { toast('请先选择一个位置'); return; }
   document.getElementById('favModalCoords').textContent = lon.toFixed(6) + ', ' + lat.toFixed(6);
   document.getElementById('favNameInput').value = '';
   document.getElementById('favModal').classList.add('show');
@@ -330,7 +330,7 @@ function closeFavModal() {
 
 function confirmFav() {
   const name = document.getElementById('favNameInput').value.trim();
-  if (!name) { toast('请输入备注名称'); return; }
+  if (!name) { toast('输入备注名称'); return; }
   const favs = getFavs();
   favs.push({ name, lon, lat, time: new Date().toISOString() });
   saveFavs(favs);
@@ -416,9 +416,9 @@ async function clearActive() {
 
 /* ---- Save to device ---- */
 async function save() {
-  if (!selected) { toast('请先在地图上选择一个位置'); return; }
+  if (!selected) { toast('请先选择一个位置'); return; }
   const btn = document.getElementById('saveBtn');
-  btn.textContent = '储存中...'; btn.disabled = true;
+  btn.textContent = '保存中...'; btn.disabled = true;
   showError(false);
   try {
     const radius = parseInt(document.getElementById('radiusInput').value) || 0;
@@ -432,7 +432,7 @@ async function save() {
       document.getElementById('status').textContent = '\\u2713 已写入: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
       document.getElementById('activeValue').textContent = '经度 ' + lon.toFixed(6) + '  纬度 ' + lat.toFixed(6) + '  精度 25m';
       renderFavs();
-      toast('\\u2713 坐标已写入设备，下次定位生效');
+      toast('\\u2713 坐标已写入设备');
       setTimeout(() => { btn.textContent='保存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
     } else {
       throw new Error(d.error || '写入失败');
@@ -440,7 +440,7 @@ async function save() {
   } catch(e) {
     btn.textContent = '保存到设备'; btn.className = 'btn btn-primary'; btn.disabled = false;
     showError(true);
-    toast('\\u2717 储存失败 - 请检查模块配置', 4000);
+    toast('\\u2717 保存失败', 4000);
   }
 }
 
@@ -481,7 +481,7 @@ function parseMapUrl(text) {
 // 纯坐标文本本地直接解析 —— 它也是唯一不需要坐标系换算的输入, 免去一次往返。
 async function parseUrl() {
   const input = document.getElementById('urlInput').value.trim();
-  if (!input) return toast('请粘贴地图链接或坐标');
+  if (!input) return toast('请粘贴链接或坐标');
 
   const low = input.toLowerCase();
   if (low.includes('http://') || low.includes('https://')) {
@@ -495,7 +495,7 @@ async function parseUrl() {
       return;
     }
     if (!data || data.error || typeof data.lat !== 'number') {
-      toast(data && data.error ? data.error : '无法解析坐标，请检查链接格式', 3000);
+      toast(data && data.error ? data.error : '请检查格式', 3000);
       return;
     }
     moveTo(data.lat, data.lon, 15);
@@ -504,7 +504,7 @@ async function parseUrl() {
   }
 
   const result = parseMapUrl(input);
-  if (!result) { toast('无法解析坐标，请检查链接格式', 3000); return; }
+  if (!result) { toast('请检查格式', 3000); return; }
   moveTo(result.lat, result.lon, 15);
   toast('📍 ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
 }
