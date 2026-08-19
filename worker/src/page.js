@@ -101,7 +101,6 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <label style="font-size:13px;color:var(--gray);display:flex;align-items:center;gap:6px;white-space:nowrap">半径/米
         <input id="radiusInput" type="number" min="0" max="5000" step="1" value="0" style="width:80px;flex:none" />
       </label>
-      <span style="font-size:11px;color:var(--gray);line-height:1.3">每次定位在目标点随机移动 0=关闭</span>
     </div>
     <div class="row">
       <button class="btn btn-primary" id="saveBtn" onclick="save()">保存到设备</button>
