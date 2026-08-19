@@ -6,7 +6,7 @@ export function getPageHtml() {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>WLOC 虚拟定位</title>
+<title>Apple GPS</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="WLOC">
 <!-- 内联图标: 没有它浏览器每次加载都会去要 /favicon.ico 并拿到 404 -->
