@@ -1,6 +1,6 @@
 #!name=Apple New
 #!desc=定位拦截
-#!icon=https://raw.githubusercontent.com/us40011/test/main/wloc.jpg
+#!icon=https://raw.githubusercontent.com/us40011/test/main/wloc.png
 
 [Script]
 Apple WLOC = type=http-response,pattern=^https?:\/\/(?:gs-loc(?:-cn)?\.apple\.com|gsp-ssl\.ls\.apple\.com|bluedot\.is\.autonavi\.com(?:\.gds\.alibabadns\.com)?)\/clls\/wloc,requires-body=1,binary-body-mode=1,max-size=0,timeout=30,script-path=https://raw.githubusercontent.com/us40011/test/main/dist/wloc.js,argument=longitude=113.94114&latitude=22.544577&accuracy=25&randomRadius=0&logLevel=info
