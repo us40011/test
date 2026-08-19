@@ -347,7 +347,7 @@ function queryActive() {
 }
 
 function clearActive() {
-  if (!confirm('确定清除设备上已保存的坐标？清除后将使用模块默认参数或停止修改定位。')) return;
+  if (!confirm('确定清除设备上已保存的坐标')) return;
   fetch(SAVE_API + '?action=clear', { method:'GET', mode:'cors', cache:'no-store' })
     .then(r => r.json())
     .then(d => {
