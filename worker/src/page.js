@@ -63,14 +63,20 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .fav-empty { text-align:center; color:var(--gray); font-size:13px; padding:16px 0; }
 .fav-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
 .fav-header h3 { margin-bottom:0; }
-.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.4); z-index:10000; display:none; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(15,23,42,.36); z-index:10000; display:none; align-items:center; justify-content:center; padding:20px; }
 .modal-overlay.show { display:flex; }
-.modal { background:#fff; border-radius:16px; padding:20px; width:100%; max-width:340px; }
-.modal h3 { font-size:17px; font-weight:600; margin-bottom:16px; text-align:center; }
-.modal input { width:100%; padding:12px; border:1px solid #d1d1d6; border-radius:10px; font-size:15px; outline:none; margin-bottom:12px; }
-.modal input:focus { border-color:var(--blue); }
-.modal .modal-btns { display:flex; gap:8px; }
-.modal .modal-btns .btn { padding:12px; }
+.modal { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(244,248,255,.68)); border:1px solid rgba(255,255,255,.78); border-radius:24px; padding:22px; width:100%; max-width:340px; box-shadow:0 22px 58px rgba(15,23,42,.22); backdrop-filter:blur(14px) saturate(1.15); -webkit-backdrop-filter:blur(14px) saturate(1.15); }
+.modal::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.65),transparent 44%),radial-gradient(circle at 20% 0%,rgba(0,122,255,.12),transparent 34%); }
+.modal > * { position:relative; z-index:1; }
+.modal-icon { width:46px; height:46px; border-radius:16px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; box-shadow:0 10px 24px rgba(0,122,255,.20); font-size:24px; }
+.modal h3 { font-size:18px; font-weight:700; margin-bottom:10px; text-align:center; color:#1c1c1e; }
+.modal-desc { font-size:14px; line-height:1.55; color:#4b5563; text-align:center; margin-bottom:18px; }
+.modal input { width:100%; padding:12px; border:1px solid rgba(255,255,255,.78); border-radius:14px; font-size:15px; outline:none; margin-bottom:12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(248,251,255,.7)); box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+.modal input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
+.modal .modal-btns { display:flex; gap:10px; }
+.modal .modal-btns .btn { padding:12px; min-width:0; }
+.confirm-modal .btn-secondary { background:rgba(255,255,255,.62); }
+@media(max-width:480px) { .modal { max-width:none; border-radius:26px; padding:24px 20px; } }
 .footer-card { text-align:center; padding:24px 16px; margin-top:16px; }
 .footer-logo { width:96px; height:96px; border-radius:20px; margin:0 auto 12px; object-fit:contain; background:#fff; box-shadow:none; display:block; }
 .layer-switch { position:absolute; top:10px; right:10px; z-index:1000; display:flex; gap:4px; background:rgba(255,255,255,.92); border-radius:8px; padding:4px; box-shadow:0 2px 8px rgba(0,0,0,.15); }
@@ -166,12 +172,24 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 <div class="toast" id="toast"></div>
 <div class="modal-overlay" id="favModal">
   <div class="modal">
+    <div class="modal-icon">📍</div>
     <h3>收藏此位置</h3>
     <input id="favNameInput" placeholder="输入备注名称" maxlength="30" />
     <div style="font-size:12px;color:var(--gray);margin-bottom:12px;text-align:center" id="favModalCoords"></div>
     <div class="modal-btns">
       <button class="btn btn-secondary" onclick="closeFavModal()">取消</button>
       <button class="btn btn-primary" onclick="confirmFav()">保存</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal confirm-modal">
+    <div class="modal-icon">⌁</div>
+    <h3>确认操作</h3>
+    <div class="modal-desc" id="confirmMessage"></div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeConfirm(false)">取消</button>
+      <button class="btn btn-primary" onclick="closeConfirm(true)">确定</button>
     </div>
   </div>
 </div>
@@ -338,8 +356,19 @@ function delFav(i) {
   toast('已删除: ' + name);
 }
 
-function clearAllFav() {
-  if (!confirm('确定清空所有收藏')) return;
+let confirmResolver = null;
+function showConfirm(message) {
+  document.getElementById('confirmMessage').textContent = message;
+  document.getElementById('confirmModal').classList.add('show');
+  return new Promise(resolve => { confirmResolver = resolve; });
+}
+function closeConfirm(ok) {
+  document.getElementById('confirmModal').classList.remove('show');
+  if (confirmResolver) { confirmResolver(ok); confirmResolver = null; }
+}
+
+async function clearAllFav() {
+  if (!(await showConfirm('确定清空所有收藏？'))) return;
   saveFavs([]);
   renderFavs();
   toast('已清空所有收藏');
@@ -370,8 +399,8 @@ function queryActive() {
     });
 }
 
-function clearActive() {
-  if (!confirm('确定清除设备上已保存的坐标')) return;
+async function clearActive() {
+  if (!(await showConfirm('确定清除设备上已保存的坐标'))) return;
   fetch(SAVE_API + '?action=clear', { method:'GET', mode:'cors', cache:'no-store' })
     .then(r => r.json())
     .then(d => {
