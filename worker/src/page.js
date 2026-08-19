@@ -368,7 +368,7 @@ function closeConfirm(ok) {
 }
 
 async function clearAllFav() {
-  if (!(await showConfirm('确定清空所有收藏？'))) return;
+  if (!(await showConfirm('确定清空所有收藏'))) return;
   saveFavs([]);
   renderFavs();
   toast('已清空所有收藏');
@@ -411,7 +411,7 @@ async function clearActive() {
         toast('已清除设备坐标');
       } else { toast('清除失败: ' + (d.error || ''), 3000); }
     })
-    .catch(() => { toast('清除失败 - 请检查模块配置', 3000); });
+    .catch(() => { toast('清除失败', 3000); });
 }
 
 /* ---- Save to device ---- */
