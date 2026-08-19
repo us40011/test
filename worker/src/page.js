@@ -385,9 +385,9 @@ function clearActive() {
 
 /* ---- Save to device ---- */
 async function save() {
-  if (!selected) { toast('请先在地图上选择一个位置'); return; }
+  if (!selected) { toast('请先选择一个位置'); return; }
   const btn = document.getElementById('saveBtn');
-  btn.textContent = '储存中...'; btn.disabled = true;
+  btn.textContent = '保存中...'; btn.disabled = true;
   showError(false);
   try {
     const radius = parseInt(document.getElementById('radiusInput').value) || 0;
