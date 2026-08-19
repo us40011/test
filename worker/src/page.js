@@ -70,7 +70,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .modal .modal-btns { display:flex; gap:8px; }
 .modal .modal-btns .btn { padding:12px; }
 .footer-card { text-align:center; padding:24px 16px; margin-top:16px; }
-.footer-logo { width:96px; height:96px; border-radius:20px; margin:0 auto 12px; object-fit:contain; background:#fff; box-shadow:none; display:block; }
+.footer-logo { width:96px; height:96px; margin:0 auto 12px; object-fit:contain; background:transparent; box-shadow:none; filter:none; display:block; }
 .layer-switch { position:absolute; top:10px; right:10px; z-index:1000; display:flex; gap:4px; background:rgba(255,255,255,.92); border-radius:8px; padding:4px; box-shadow:0 2px 8px rgba(0,0,0,.15); }
 .layer-btn { border:none; background:transparent; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:500; color:#333; cursor:pointer; transition:all .15s; white-space:nowrap; }
 .layer-btn.active { background:var(--blue); color:#fff; }
@@ -153,7 +153,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
   </div>
   <div class="card footer-card">
     <img class="footer-logo" id="footerLogo" src="/gps.png" alt="Logo" onerror="this.onerror=null; this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';">
-    <div id="fallbackLogo" style="display:none; width:96px; height:96px; border-radius:20px; margin:0 auto 12px; background:linear-gradient(135deg, #007aff, #5856d6); box-shadow:0 4px 16px rgba(0, 122, 255, 0.25); align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:22px;">W</div>
+    <div id="fallbackLogo" style="display:none; width:96px; height:96px; border-radius:20px; margin:0 auto 12px; background:linear-gradient(135deg, #007aff, #5856d6); align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:22px;">W</div>
     <div style="font-weight:600;font-size:15px;color:#1c1c1e;margin-bottom:4px">澳门银河科技</div>
     <div style="font-size:12px;color:var(--gray);margin-bottom:14px;font-family:monospace;font-weight:700;">2026-08</div>
     <a class="btn btn-tg" href="https://t.me/VIP111177" target="_blank" rel="noopener">Telegram</a>
