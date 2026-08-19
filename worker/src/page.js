@@ -165,7 +165,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 <div class="modal-overlay" id="favModal">
   <div class="modal">
     <h3>收藏此位置</h3>
-    <input id="favNameInput" placeholder="输入备注名称（如: 公司、家）" maxlength="30" />
+    <input id="favNameInput" placeholder="输入备注名称" maxlength="30" />
     <div style="font-size:12px;color:var(--gray);margin-bottom:12px;text-align:center" id="favModalCoords"></div>
     <div class="modal-btns">
       <button class="btn btn-secondary" onclick="closeFavModal()">取消</button>
@@ -297,7 +297,7 @@ function escHtml(s) {
 }
 
 function addFav() {
-  if (!selected) { toast('请先在地图上选择一个位置'); return; }
+  if (!selected) { toast('请先选择一个位置'); return; }
   document.getElementById('favModalCoords').textContent = lon.toFixed(6) + ', ' + lat.toFixed(6);
   document.getElementById('favNameInput').value = '';
   document.getElementById('favModal').classList.add('show');
@@ -310,7 +310,7 @@ function closeFavModal() {
 
 function confirmFav() {
   const name = document.getElementById('favNameInput').value.trim();
-  if (!name) { toast('请输入备注名称'); return; }
+  if (!name) { toast('输入备注名称'); return; }
   const favs = getFavs();
   favs.push({ name, lon, lat, time: new Date().toISOString() });
   saveFavs(favs);
@@ -337,7 +337,7 @@ function delFav(i) {
 }
 
 function clearAllFav() {
-  if (!confirm('确定清空所有收藏？')) return;
+  if (!confirm('确定清空所有收藏')) return;
   saveFavs([]);
   renderFavs();
   toast('已清空所有收藏');
@@ -450,7 +450,7 @@ function parseMapUrl(text) {
 // 纯坐标文本本地直接解析 —— 它也是唯一不需要坐标系换算的输入, 免去一次往返。
 async function parseUrl() {
   const input = document.getElementById('urlInput').value.trim();
-  if (!input) return toast('⭐请粘贴链接或坐标');
+  if (!input) return toast('请粘贴链接或坐标');
 
   const low = input.toLowerCase();
   if (low.includes('http://') || low.includes('https://')) {
@@ -464,7 +464,7 @@ async function parseUrl() {
       return;
     }
     if (!data || data.error || typeof data.lat !== 'number') {
-      toast(data && data.error ? data.error : '⭐ 请检查格式', 3000);
+      toast(data && data.error ? data.error : '请检查格式', 3000);
       return;
     }
     moveTo(data.lat, data.lon, 15);
@@ -473,14 +473,14 @@ async function parseUrl() {
   }
 
   const result = parseMapUrl(input);
-  if (!result) { toast('⭐ 请检查格式', 3000); return; }
+  if (!result) { toast('请检查格式', 3000); return; }
   moveTo(result.lat, result.lon, 15);
   toast('📍 ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
 }
 
 async function searchPlace() {
   const q = document.getElementById('searchInput').value.trim();
-  if (!q) return toast('⭐ 请输入地名');
+  if (!q) return toast('请输入地名');
   toast('搜索中...');
   try {
     const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q));
