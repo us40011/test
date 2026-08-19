@@ -1,5 +1,6 @@
 import { Hono } from "hono/tiny";
 import { getPageHtml } from "./page.js";
+import { GPS_LOGO_PNG_BASE64 } from "./logo.js";
 import { parseCoords, gcj02ToWgs84, toWgs84, round6, inRange } from "./parse.js";
 
 const app = new Hono();
