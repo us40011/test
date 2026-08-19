@@ -18,14 +18,16 @@ export function getPageHtml() {
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"><\/script>
 <style>
-:root { --blue:#007aff; --green:#34c759; --red:#ff3b30; --gray:#8e8e93; --bg:#f6f8ff; --orange:#ff9500; --tg:#229ED9; --card:rgba(255,255,255,.94); --stroke:rgba(210,222,255,.72); --shadow:0 8px 22px rgba(58,86,160,.08); }
+:root { --blue:#007aff; --green:#34c759; --red:#ff3b30; --gray:#8e8e93; --bg:#f6f8ff; --orange:#ff9500; --tg:#229ED9; --card:rgba(255,255,255,.58); --stroke:rgba(255,255,255,.72); --shadow:0 12px 32px rgba(58,86,160,.10); --glass-blur:10px; }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:radial-gradient(circle at 16% 10%,rgba(0,122,255,.08),transparent 32%),radial-gradient(circle at 84% 16%,rgba(88,86,214,.07),transparent 30%),linear-gradient(160deg,#f8fbff 0%,#eef4ff 54%,#f7f5ff 100%); color:#1c1c1e; min-height:100vh; }
+body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:radial-gradient(circle at 18% 8%,rgba(0,122,255,.16),transparent 30%),radial-gradient(circle at 84% 18%,rgba(88,86,214,.13),transparent 28%),radial-gradient(circle at 50% 72%,rgba(255,255,255,.72),transparent 34%),linear-gradient(160deg,#f9fbff 0%,#edf4ff 50%,#f7f4ff 100%); color:#1c1c1e; min-height:100vh; }
 #map { height:50vh; width:100%; min-height:250px; }
 .panel { padding:16px; max-width:600px; margin:0 auto; }
-.card { background:var(--card); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); }
+.card { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(255,255,255,.46)); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); backdrop-filter:blur(var(--glass-blur)) saturate(1.15); -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.15); contain:paint; }
+.card::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.58),transparent 42%),radial-gradient(circle at 18% 0%,rgba(255,255,255,.55),transparent 30%); opacity:.72; }
+.card > * { position:relative; z-index:1; }
 .card h3 { font-size:15px; font-weight:700; margin-bottom:10px; color:#1c1c1e; letter-spacing:.01em; }
-.coords { font-family:"SF Mono",monospace; font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(247,250,255,.9)); border:1px solid rgba(216,226,255,.72); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.72); }
+.coords { font-family:"SF Mono",monospace; font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(248,251,255,.54)); border:1px solid rgba(255,255,255,.7); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.74); }
 .row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
 .action-card { padding:12px; }
 .action-row { display:flex; gap:8px; flex-wrap:nowrap; margin-top:0; }
@@ -33,24 +35,24 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .btn { flex:1; min-width:100px; padding:12px 16px; border:none; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease,filter .12s ease,box-shadow .12s ease; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; text-align:center; box-shadow:0 6px 14px rgba(32,68,138,.10); touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
 .btn:active { transform:translateY(1px) scale(.985); filter:brightness(.96); box-shadow:0 3px 8px rgba(32,68,138,.10); }
 .btn-primary { background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; }
-.btn-secondary { background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(241,246,255,.92)); color:#263248; border:1px solid rgba(255,255,255,.78); }
+.btn-secondary { background:linear-gradient(135deg,rgba(255,255,255,.76),rgba(241,246,255,.58)); color:#263248; border:1px solid rgba(255,255,255,.78); }
 .btn-danger { background:linear-gradient(135deg,#ff6b61,#ff4f72); color:#fff; }
 .btn-tg { background:linear-gradient(135deg,#229ED9,#1677b8); color:#fff; }
 .btn.success { background:var(--green); color:#fff; }
 .btn-sm { flex:none; min-width:auto; padding:6px 12px; font-size:12px; border-radius:8px; }
 .input-row { display:flex; gap:8px; margin-top:10px; }
-.input-row input { flex:1; padding:11px 12px; border:1px solid rgba(255,255,255,.78); border-radius:12px; font-size:14px; outline:none; min-width:0; background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(248,251,255,.94)); color:#1c1c1e; box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 4px 12px rgba(32,68,138,.06); transition:border-color .12s ease,box-shadow .12s ease; }
+.input-row input { flex:1; padding:11px 12px; border:1px solid rgba(255,255,255,.78); border-radius:12px; font-size:14px; outline:none; min-width:0; background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(248,251,255,.68)); color:#1c1c1e; box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 4px 12px rgba(32,68,138,.05); transition:border-color .12s ease,box-shadow .12s ease; }
 .input-row input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .status { font-size:12px; color:var(--gray); margin-top:8px; text-align:center; }
 .error-banner { background:var(--red); color:#fff; padding:14px 16px; border-radius:12px; margin-bottom:12px; font-size:14px; line-height:1.5; display:none; }
 .error-banner b { display:block; margin-bottom:4px; }
 .toast { position:fixed; top:60px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.8); color:#fff; padding:10px 20px; border-radius:20px; font-size:14px; opacity:0; transition:opacity .3s; pointer-events:none; z-index:9999; max-width:90vw; text-align:center; }
 .toast.show { opacity:1; }
-.active-loc { background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(247,250,255,.9)); border:1px solid rgba(216,226,255,.72); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; }
+.active-loc { background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(247,250,255,.54)); border:1px solid rgba(255,255,255,.7); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; }
 .active-loc .label { font-size:11px; color:var(--gray); margin-bottom:4px; }
 .active-loc .value { font-family:"SF Mono",monospace; font-size:13px; }
 .fav-list { max-height:240px; overflow-y:auto; }
-.fav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(248,251,255,.9)); border:1px solid rgba(216,226,255,.68); border-radius:12px; margin-bottom:6px; cursor:pointer; transition:filter .12s ease,transform .12s ease; }
+.fav-item { display:flex; align-items:center; gap:8px; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(248,251,255,.56)); border:1px solid rgba(255,255,255,.68); border-radius:12px; margin-bottom:6px; cursor:pointer; transition:filter .12s ease,transform .12s ease; }
 .fav-item:active { transform:translateY(1px); filter:brightness(.97); }
 .fav-item .fav-info { flex:1; min-width:0; }
 .fav-item .fav-name { font-size:14px; font-weight:500; color:#333; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -81,7 +83,7 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .target-pin .pin-fill { fill:url(#target-pin-red); }
 .target-pin .pin-core { fill:#fff; }
 .target-pin .pin-center { fill:#ff453a; }
-@media(max-width:480px) { #map { height:44vh; } .panel { padding:12px; } .card { border-radius:16px; padding:14px; } .action-card { padding:10px; } .action-row { gap:6px; } .action-row .btn { padding:11px 4px; } .layer-btn { padding:5px 7px; font-size:11px; } }
+@media(max-width:480px) { :root { --glass-blur:7px; --shadow:0 8px 18px rgba(58,86,160,.08); } #map { height:44vh; } .panel { padding:12px; } .card { border-radius:16px; padding:14px; } .action-card { padding:10px; } .action-row { gap:6px; } .action-row .btn { padding:11px 4px; } .layer-btn { padding:5px 7px; font-size:11px; } }
 </style>
 </head>
 <body>
