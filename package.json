@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "scripts": {
+    "worker:upload": "wrangler versions upload --minify",
+    "worker:deploy": "wrangler deploy --minify"
+  },
+  "dependencies": {
+    "hono": "^4.10.6"
+  }
+}

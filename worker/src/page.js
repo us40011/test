@@ -18,7 +18,7 @@ export function getPageHtml() {
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"><\/script>
 <style>
-:root { --blue:#007aff; --green:#34c759; --red:#ff3b30; --gray:#8e8e93; --bg:#f2f2f7; --orange:#ff9500; }
+:root { --blue:#007aff; --green:#34c759; --red:#ff3b30; --gray:#8e8e93; --bg:#f2f2f7; --orange:#ff9500; --tg:#229ED9; }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:var(--bg); }
 #map { height:50vh; width:100%; min-height:250px; }
@@ -27,13 +27,15 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .card h3 { font-size:15px; font-weight:600; margin-bottom:10px; }
 .coords { font-family:"SF Mono",monospace; font-size:14px; color:#333; padding:8px 12px; background:var(--bg); border-radius:8px; word-break:break-all; }
 .row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-.btn { flex:1; min-width:100px; padding:12px 16px; border:none; border-radius:10px; font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; }
+.btn { flex:1; min-width:100px; padding:12px 16px; border:none; border-radius:10px; font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; text-align:center; }
 .btn-primary { background:var(--blue); color:#fff; }
 .btn-primary:active { background:#005bb5; transform:scale(.97); }
 .btn-secondary { background:#e5e5ea; color:#333; }
 .btn-secondary:active { background:#d1d1d6; transform:scale(.97); }
 .btn-danger { background:var(--red); color:#fff; }
 .btn-danger:active { background:#d63027; transform:scale(.97); }
+.btn-tg { background:var(--tg); color:#fff; }
+.btn-tg:active { background:#1b82b3; transform:scale(.97); }
 .btn.success { background:var(--green); color:#fff; }
 .btn-sm { flex:none; min-width:auto; padding:6px 12px; font-size:12px; border-radius:8px; }
 .input-row { display:flex; gap:8px; margin-top:10px; }
@@ -67,10 +69,18 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .modal input:focus { border-color:var(--blue); }
 .modal .modal-btns { display:flex; gap:8px; }
 .modal .modal-btns .btn { padding:12px; }
+.footer-card { text-align:center; padding:24px 16px; margin-top:16px; }
+.footer-logo { width:96px; height:96px; border-radius:20px; margin:0 auto 12px; object-fit:contain; background:#fff; box-shadow:none; display:block; }
 .layer-switch { position:absolute; top:10px; right:10px; z-index:1000; display:flex; gap:4px; background:rgba(255,255,255,.92); border-radius:8px; padding:4px; box-shadow:0 2px 8px rgba(0,0,0,.15); }
 .layer-btn { border:none; background:transparent; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:500; color:#333; cursor:pointer; transition:all .15s; white-space:nowrap; }
 .layer-btn.active { background:var(--blue); color:#fff; }
 .layer-btn:active { transform:scale(.95); }
+.target-pin { width:48px; height:48px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.18)); }
+.target-pin svg { display:block; width:48px; height:48px; overflow:visible; }
+.target-pin .pin-outline { fill:#ff3b30; }
+.target-pin .pin-fill { fill:url(#target-pin-red); }
+.target-pin .pin-core { fill:#fff; }
+.target-pin .pin-center { fill:#ff453a; }
 @media(max-width:480px) { #map { height:44vh; } .panel { padding:12px; } .layer-btn { padding:5px 7px; font-size:11px; } }
 </style>
 </head>
@@ -101,7 +111,6 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <label style="font-size:13px;color:var(--gray);display:flex;align-items:center;gap:6px;white-space:nowrap">半径/米
         <input id="radiusInput" type="number" min="0" max="5000" step="1" value="0" style="width:80px;flex:none" />
       </label>
-      <span style="font-size:11px;color:var(--gray);line-height:1.3">每次定位在目标点随机移动 0=关闭</span>
     </div>
     <div class="row">
       <button class="btn btn-primary" id="saveBtn" onclick="save()">保存到设备</button>
@@ -142,6 +151,13 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="searchPlace()">搜索</button>
     </div>
   </div>
+  <div class="card footer-card">
+    <img class="footer-logo" id="footerLogo" src="/wloc.jpg" alt="Logo" onerror="this.onerror=null; this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';">
+    <div id="fallbackLogo" style="display:none; width:96px; height:96px; border-radius:20px; margin:0 auto 12px; background:linear-gradient(135deg, #007aff, #5856d6); box-shadow:0 4px 16px rgba(0, 122, 255, 0.25); align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:22px;">W</div>
+    <div style="font-weight:600;font-size:15px;color:#1c1c1e;margin-bottom:4px">澳门银河科技</div>
+    <div style="font-size:12px;color:var(--gray);margin-bottom:14px;font-family:monospace;font-weight:700;">2026-08</div>
+    <a class="btn btn-tg" href="https://t.me/VIP111177" target="_blank" rel="noopener">Telegram</a>
+  </div>
   <div class="status" id="status">选好位置后点击「保存到设备」写入代理工具</div>
 </div>
 <div class="toast" id="toast"></div>
@@ -169,7 +185,7 @@ const FAV_KEY = 'wloc_favorites';
 // lat/lon 恒为 WGS84 —— 这是写进设备、也是 wloc 唯一认的坐标系。
 // 底图可能是 GCJ-02 图源, 屏幕上的经纬度与它并不相等, 换算集中在 toDisplay/
 // fromDisplay 两个函数里, 其它地方一律不碰。
-let lat = 22.544577, lon = 113.94114;
+let lat = 16.833909, lon = 112.328993;
 let selected = false;
 let activeLon = null, activeLat = null;
 let layerIsGcj = false;
@@ -204,7 +220,13 @@ function switchLayer(name) {
   map.setView([d.lat, d.lon], map.getZoom());
   document.querySelectorAll('.layer-btn').forEach(b => b.classList.toggle('active', b.dataset.layer === name));
 }
-let marker = L.marker([lat, lon], {draggable:true}).addTo(map);
+const targetIcon = L.divIcon({
+  className: 'target-pin-icon',
+  html: '<div class="target-pin" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><defs><linearGradient id="target-pin-red" x1="10" y1="6" x2="38" y2="42" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff6b63"/><stop offset="0.48" stop-color="#ff453a"/><stop offset="1" stop-color="#ff3b30"/></linearGradient></defs><path class="pin-outline" d="M24 3C14.1 3 6 11.1 6 21c0 12.2 15.8 22.7 17.1 23.6.6.4 1.2.4 1.8 0C26.2 43.7 42 33.2 42 21 42 11.1 33.9 3 24 3Z"/><path class="pin-fill" d="M24 6C15.7 6 9 12.7 9 21c0 9.4 11.4 18.5 15 21.1C27.6 39.5 39 30.4 39 21 39 12.7 32.3 6 24 6Z"/><circle class="pin-core" cx="24" cy="21" r="9"/><circle class="pin-center" cx="24" cy="21" r="4"/></svg></div>',
+  iconSize: [48, 48],
+  iconAnchor: [24, 44],
+});
+let marker = L.marker([lat, lon], {draggable:true, icon:targetIcon}).addTo(map);
 
 // 地图交互给出的都是「屏幕坐标系」的读数, 一律先过 fromDisplay 再进 setPos。
 marker.on('dragend', e => { const p=e.target.getLatLng(); setPosFromDisplay(p.lat, p.lng); });
