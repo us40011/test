@@ -88,12 +88,11 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 </div>
 <div class="panel">
   <div class="error-banner" id="errorBanner">
-    <b>模块未生效</b>
+    <b>定位没有成功生效</b>
     请检查以下配置：<br>
-    1. 已安装并启用Apple New模块<br>
-    2. 已开启且信任CA证书<br>
-    3. 主机名包含gs-loc.apple.com<br>
-    4. VPN软件已连接
+    1. 已启用Apple New模块<br>
+    2. 已信任CA证书<br>
+    3. VPN软件已连接
   </div>
   <div class="card">
     <h3>选择目标位置</h3>
