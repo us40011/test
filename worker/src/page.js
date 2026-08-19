@@ -498,10 +498,8 @@ document.addEventListener('paste', e => {
   // 粘贴目标本来就是这个输入框时, 让浏览器原生插入即可; 此处再赋一次值,
   // 原生插入会叠加在后面, 结果是同一段文本出现两遍。
   if (e.target !== input) input.value = text;
-  setTimeout(parseUrl, 200);
 });
 document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') searchPlace(); });
-document.getElementById('urlInput').addEventListener('keydown', e => { if(e.key==='Enter') parseUrl(); });
 document.getElementById('favNameInput').addEventListener('keydown', e => { if(e.key==='Enter') confirmFav(); });
 
 renderFavs();
