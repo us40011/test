@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="wloc.jpg" width="144" />
+  <img src="wloc.png" width="144" />
 </p>
 
 # Apple WLOC 定位修改
