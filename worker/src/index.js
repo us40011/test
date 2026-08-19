@@ -1,11 +1,20 @@
 import { Hono } from "hono/tiny";
 import { getPageHtml } from "./page.js";
+import { WLOC_LOGO_JPG_BASE64 } from "./logo.js";
 import { parseCoords, gcj02ToWgs84, toWgs84, round6, inRange } from "./parse.js";
 
 const app = new Hono();
 
 app.get("/", (c) => {
   return c.html(getPageHtml());
+});
+
+app.get("/wloc.jpg", (c) => {
+  const bytes = Uint8Array.from(atob(WLOC_LOGO_JPG_BASE64), ch => ch.charCodeAt(0));
+  return c.body(bytes, 200, {
+    "Content-Type": "image/jpeg",
+    "Cache-Control": "public, max-age=31536000, immutable",
+  });
 });
 
 // 地图链接解析: 供快捷指令调用。
