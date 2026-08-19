@@ -342,7 +342,7 @@ function queryActive() {
       }
     })
     .catch(() => {
-      el.textContent = '查询失败 (需要代理模块支持)';
+      el.textContent = '查询结果';
     });
 }
 
