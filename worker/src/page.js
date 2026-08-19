@@ -75,6 +75,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .modal-icon { width:46px; height:46px; border-radius:16px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; box-shadow:0 10px 24px rgba(0,122,255,.20); font-size:24px; }
 .modal h3 { font-size:18px; font-weight:700; margin-bottom:10px; text-align:center; color:#1c1c1e; }
 .modal-desc { font-size:14px; line-height:1.55; color:#4b5563; text-align:center; margin-bottom:18px; }
+.modal-coords { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; font-size:12px; color:var(--gray); margin-bottom:12px; text-align:center; font-family:"SF Mono",monospace; }
 .modal input { width:100%; padding:12px; border:1px solid rgba(255,255,255,.78); border-radius:14px; font-size:15px; outline:none; margin-bottom:12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(238,248,231,.74)); box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
 .modal input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .modal .modal-btns { display:flex; gap:10px; }
@@ -181,7 +182,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
     <div class="modal-icon">📍</div>
     <h3>收藏此位置</h3>
     <input id="favNameInput" placeholder="输入备注名称" maxlength="30" />
-    <div style="font-size:12px;color:var(--gray);margin-bottom:12px;text-align:center" id="favModalCoords"></div>
+    <div class="modal-coords" id="favModalCoords"></div>
     <div class="modal-btns">
       <button class="btn btn-secondary" onclick="closeFavModal()">取消</button>
       <button class="btn btn-primary" onclick="confirmFav()">保存</button>
@@ -322,7 +323,7 @@ function escHtml(s) {
 
 function addFav() {
   if (!selected) { toast('请先选择一个位置'); return; }
-  document.getElementById('favModalCoords').textContent = lon.toFixed(6) + ', ' + lat.toFixed(6);
+  document.getElementById('favModalCoords').innerHTML = '<span>' + lon.toFixed(6) + '<\/span><span>' + lat.toFixed(6) + '<\/span>';
   document.getElementById('favNameInput').value = '';
   document.getElementById('favModal').classList.add('show');
   setTimeout(() => document.getElementById('favNameInput').focus(), 100);
