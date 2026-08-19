@@ -9,13 +9,6 @@ app.get("/", (c) => {
   return c.html(getPageHtml());
 });
 
-app.get("/gps.png", (c) => {
-  const bytes = Uint8Array.from(atob(GPS_LOGO_PNG_BASE64), ch => ch.charCodeAt(0));
-  return c.body(bytes, 200, {
-    "Content-Type": "image/png",
-    "Cache-Control": "public, max-age=31536000, immutable",
-  });
-});
 
 // 地图链接解析: 供快捷指令调用。
 // GET /api/parse?u=<链接>&format=json&cs=<gcj|none>
