@@ -478,7 +478,7 @@ async function parseUrl() {
 
 async function searchPlace() {
   const q = document.getElementById('searchInput').value.trim();
-  if (!q) return toast('请输入地名');
+  if (!q) return toast('⭐ 请输入地名');
   toast('搜索中...');
   try {
     const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q));
