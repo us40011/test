@@ -142,7 +142,6 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <input id="urlInput" placeholder="Apple/高德 > 链接/经纬度" />
       <button class="btn btn-secondary" style="flex:none;min-width:56px" onclick="parseUrl()">解析</button>
     </div>
-    <div style="font-size:11px;color:var(--gray);margin-top:6px">支持 Apple · Google · 高德 · 百度</div>
   </div>
   <div class="card">
     <h3>搜索地点</h3>
@@ -467,14 +466,14 @@ async function parseUrl() {
       return;
     }
     moveTo(data.lat, data.lon, 15);
-    toast(data.name ? '已解析: ' + data.name : '已解析: ' + data.lon.toFixed(4) + ', ' + data.lat.toFixed(4));
+    toast(data.name ? '📍 ' + data.name : '📍 ' + data.lon.toFixed(4) + ', ' + data.lat.toFixed(4));
     return;
   }
 
   const result = parseMapUrl(input);
   if (!result) { toast('无法解析坐标，请检查链接格式', 3000); return; }
   moveTo(result.lat, result.lon, 15);
-  toast('已解析: ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
+  toast('📍 ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
 }
 
 async function searchPlace() {
