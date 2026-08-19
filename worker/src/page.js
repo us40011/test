@@ -368,7 +368,7 @@ function closeConfirm(ok) {
 }
 
 async function clearAllFav() {
-  if (!(await showConfirm('清空全部收藏的位置？'))) return;
+  if (!(await showConfirm('清空已收藏的位置'))) return;
   saveFavs([]);
   renderFavs();
   toast('已清空所有收藏');
@@ -400,7 +400,7 @@ function queryActive() {
 }
 
 async function clearActive() {
-  if (!(await showConfirm('清除当前设备坐标？'))) return;
+  if (!(await showConfirm('清空设备已保存坐标'))) return;
   fetch(SAVE_API + '?action=clear', { method:'GET', mode:'cors', cache:'no-store' })
     .then(r => r.json())
     .then(d => {
