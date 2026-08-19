@@ -75,6 +75,8 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 .modal input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .modal .modal-btns { display:flex; gap:10px; }
 .modal .modal-btns .btn { padding:12px; min-width:0; }
+.confirm-modal { padding-top:28px; }
+.confirm-modal .modal-desc { margin:0 8px 20px; font-size:16px; font-weight:600; color:#1f2937; }
 .confirm-modal .btn-secondary { background:rgba(255,255,255,.62); }
 @media(max-width:480px) { .modal { max-width:none; border-radius:26px; padding:24px 20px; } }
 .footer-card { text-align:center; padding:24px 16px; margin-top:16px; }
@@ -184,8 +186,6 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
 </div>
 <div class="modal-overlay" id="confirmModal">
   <div class="modal confirm-modal">
-    <div class="modal-icon">⌁</div>
-    <h3>确认操作</h3>
     <div class="modal-desc" id="confirmMessage"></div>
     <div class="modal-btns">
       <button class="btn btn-secondary" onclick="closeConfirm(false)">取消</button>
@@ -368,7 +368,7 @@ function closeConfirm(ok) {
 }
 
 async function clearAllFav() {
-  if (!(await showConfirm('确定清空所有收藏'))) return;
+  if (!(await showConfirm('清空全部收藏的位置？'))) return;
   saveFavs([]);
   renderFavs();
   toast('已清空所有收藏');
@@ -400,7 +400,7 @@ function queryActive() {
 }
 
 async function clearActive() {
-  if (!(await showConfirm('确定清除设备上已保存的坐标'))) return;
+  if (!(await showConfirm('清除当前设备坐标？'))) return;
   fetch(SAVE_API + '?action=clear', { method:'GET', mode:'cors', cache:'no-store' })
     .then(r => r.json())
     .then(d => {
