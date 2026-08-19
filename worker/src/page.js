@@ -101,7 +101,6 @@ body { font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif;
       <label style="font-size:13px;color:var(--gray);display:flex;align-items:center;gap:6px;white-space:nowrap">半径/米
         <input id="radiusInput" type="number" min="0" max="5000" step="1" value="0" style="width:80px;flex:none" />
       </label>
-      <span style="font-size:11px;color:var(--gray);line-height:1.3">每次定位在目标点随机移动 0=关闭</span>
     </div>
     <div class="row">
       <button class="btn btn-primary" id="saveBtn" onclick="save()">保存到设备</button>
@@ -169,7 +168,7 @@ const FAV_KEY = 'wloc_favorites';
 // lat/lon 恒为 WGS84 —— 这是写进设备、也是 wloc 唯一认的坐标系。
 // 底图可能是 GCJ-02 图源, 屏幕上的经纬度与它并不相等, 换算集中在 toDisplay/
 // fromDisplay 两个函数里, 其它地方一律不碰。
-let lat = 22.544577, lon = 113.94114;
+let lat = 16.833909, lon = 112.328993;
 let selected = false;
 let activeLon = null, activeLat = null;
 let layerIsGcj = false;
