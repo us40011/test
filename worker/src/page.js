@@ -91,8 +91,6 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .layer-menu { position:absolute; top:10px; right:10px; z-index:1000; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
 .layer-menu-toggle { border:1px solid rgba(255,255,255,.72); background:rgba(255,255,255,.86); color:#263248; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 8px 22px rgba(15,23,42,.16),inset 0 1px 0 rgba(255,255,255,.7); -webkit-backdrop-filter:blur(16px) saturate(1.18); backdrop-filter:blur(16px) saturate(1.18); transition:transform .12s ease,filter .12s ease,box-shadow .12s ease; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
 .layer-menu-toggle:active { transform:translateY(1px) scale(.985); filter:brightness(.96); box-shadow:0 4px 12px rgba(15,23,42,.14),inset 0 1px 0 rgba(255,255,255,.64); }
-.layer-menu-toggle .chevron { display:inline-block; margin-left:4px; transition:transform .16s ease; }
-.layer-menu.open .layer-menu-toggle .chevron { transform:rotate(180deg); }
 .layer-switch { display:none; flex-direction:column; gap:4px; min-width:112px; background:rgba(255,255,255,.82); border:1px solid rgba(255,255,255,.7); border-radius:14px; padding:6px; box-shadow:0 12px 30px rgba(15,23,42,.18),inset 0 1px 0 rgba(255,255,255,.68); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2); }
 .layer-menu.open .layer-switch { display:flex; }
 .layer-btn { width:100%; border:none; background:transparent; padding:8px 10px; border-radius:10px; font-size:13px; font-weight:600; color:#263248; cursor:pointer; transition:transform .12s ease,filter .12s ease,background .12s ease,color .12s ease; white-space:nowrap; text-align:left; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
@@ -112,7 +110,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 <div class="map-wrap">
 <div id="map"></div>
 <div class="layer-menu" id="layerMenu">
-<button class="layer-menu-toggle" type="button" onclick="toggleLayerMenu()" aria-expanded="false" aria-controls="layerSwitch">图层：<span id="layerLabel">彩色</span><span class="chevron">⌄</span></button>
+<button class="layer-menu-toggle" type="button" onclick="toggleLayerMenu()" aria-expanded="false" aria-controls="layerSwitch">图层：<span id="layerLabel">彩色</span></button>
 <div class="layer-switch" id="layerSwitch">
   <button class="layer-btn" data-layer="satellite" onclick="switchLayer('satellite')">卫星</button>
   <button class="layer-btn" data-layer="wgs84" onclick="switchLayer('wgs84')">WGS84</button>
