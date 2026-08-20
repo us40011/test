@@ -540,6 +540,7 @@ async function parseUrl() {
       return;
     }
     moveTo(data.lat, data.lon, 15);
+    document.getElementById('urlInput').value = '';
     toast(data.name ? '📍 ' + data.name : '📍 ' + data.lon.toFixed(4) + ', ' + data.lat.toFixed(4));
     return;
   }
@@ -547,6 +548,7 @@ async function parseUrl() {
   const result = parseMapUrl(input);
   if (!result) { toast('请检查格式', 3000); return; }
   moveTo(result.lat, result.lon, 15);
+  document.getElementById('urlInput').value = '';
   toast('📍 ' + result.lon.toFixed(4) + ', ' + result.lat.toFixed(4));
 }
 
@@ -560,6 +562,7 @@ async function searchPlace() {
     if (!results.length) { toast('未找到: ' + q, 3000); return; }
     const p = results[0];
     moveTo(parseFloat(p.lat), parseFloat(p.lon), 15);
+    document.getElementById('searchInput').value = '';
     toast(p.display_name.slice(0, 40));
   } catch(e) { toast('搜索失败', 3000); }
 }
