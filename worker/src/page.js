@@ -27,6 +27,8 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .panel { position:relative; z-index:700; padding:16px; max-width:600px; margin:-46px auto 0; }
 .card { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(236,247,229,.72)); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); contain:layout paint style; transform:translateZ(0); }
 .card::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.82),transparent 38%),radial-gradient(circle at 16% 0%,rgba(255,255,255,.7),transparent 28%),linear-gradient(315deg,rgba(119,164,105,.12),transparent 42%); opacity:.9; }
+.dashboard-card { background:linear-gradient(145deg,#fff,#ecf7e5); }
+.dashboard-card::before { opacity:1; }
 .card > * { position:relative; z-index:1; }
 .card h3 { font-size:15px; font-weight:700; margin-bottom:10px; color:#1c1c1e; letter-spacing:.01em; }
 .coords { font-family:"SF Mono",monospace; font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(236,247,229,.68)); border:1px solid rgba(255,255,255,.82); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 6px 16px rgba(72,112,76,.08); }
@@ -129,7 +131,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
     2. 已信任CA证书<br>
     3. VPN软件已连接
   </div>
-  <div class="card">
+  <div class="card dashboard-card">
     <h3>仪表盘实时数据</h3>
     <div class="coords" id="coords">每次定位在目标点随机移动 0=关闭</div>
     <div class="input-row" style="margin-top:10px">
