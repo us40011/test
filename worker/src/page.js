@@ -132,7 +132,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
     3. VPN软件已连接
   </div>
   <div class="card dashboard-card">
-    <h3>仪表盘实时数据</h3>
+    <h3>地图实时数据</h3>
     <div class="coords" id="coords">每次定位在目标点随机移动 0=关闭</div>
     <div class="input-row" style="margin-top:10px">
       <label style="font-size:13px;color:var(--gray);display:flex;align-items:center;gap:6px;white-space:nowrap">移动半径 / 米
