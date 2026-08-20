@@ -24,7 +24,7 @@ html { background:#dfeeda; scroll-behavior:auto; }
 body { position:relative; overflow-x:hidden; font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:linear-gradient(145deg,#eef8e9 0%,#dcecd6 46%,#eff6df 100%); color:#1c1c1e; min-height:100vh; }
 body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; background:radial-gradient(ellipse at 18% 8%,rgba(164,210,151,.42),transparent 34%),radial-gradient(ellipse at 84% 18%,rgba(123,187,156,.32),transparent 30%),radial-gradient(ellipse at 50% 88%,rgba(255,246,206,.38),transparent 38%),linear-gradient(145deg,rgba(255,255,255,.32),transparent 45%); transform:translateZ(0); }
 #map { height:50vh; width:100%; min-height:250px; }
-.panel { padding:16px; max-width:600px; margin:0 auto; }
+.panel { position:relative; z-index:700; padding:16px; max-width:600px; margin:-46px auto 0; }
 .card { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(236,247,229,.72)); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); contain:layout paint style; transform:translateZ(0); }
 .card::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.82),transparent 38%),radial-gradient(circle at 16% 0%,rgba(255,255,255,.7),transparent 28%),linear-gradient(315deg,rgba(119,164,105,.12),transparent 42%); opacity:.9; }
 .card > * { position:relative; z-index:1; }
@@ -86,9 +86,15 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 @media(max-width:480px) { .modal { max-width:none; border-radius:26px; padding:24px 20px; } }
 .footer-card { text-align:center; padding:24px 16px; margin-top:16px; }
 .footer-logo { width:96px; height:96px; border-radius:20px; margin:0 auto 12px; object-fit:contain; background:#fff; box-shadow:none; display:block; }
-.layer-switch { position:absolute; top:10px; right:10px; z-index:1000; display:flex; gap:4px; background:rgba(255,255,255,.92); border-radius:8px; padding:4px; box-shadow:0 2px 8px rgba(0,0,0,.15); }
-.layer-btn { border:none; background:transparent; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:500; color:#333; cursor:pointer; transition:transform .12s ease,filter .12s ease; white-space:nowrap; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
-.layer-btn.active { background:var(--blue); color:#fff; }
+.map-wrap { position:relative; overflow:visible; isolation:isolate; }
+.map-wrap::after { content:""; position:absolute; left:0; right:0; bottom:-56px; height:178px; z-index:500; pointer-events:none; background:linear-gradient(to bottom,rgba(237,245,233,0),rgba(237,245,233,.32) 32%,rgba(237,245,233,.78) 62%,rgba(237,245,233,.98) 100%); mask-image:linear-gradient(to bottom,transparent,#000 18%,#000); -webkit-mask-image:linear-gradient(to bottom,transparent,#000 18%,#000); }
+.layer-menu { position:absolute; top:10px; right:10px; z-index:1000; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.layer-menu-toggle { border:1px solid rgba(255,255,255,.72); background:rgba(255,255,255,.86); color:#263248; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 8px 22px rgba(15,23,42,.16),inset 0 1px 0 rgba(255,255,255,.7); -webkit-backdrop-filter:blur(16px) saturate(1.18); backdrop-filter:blur(16px) saturate(1.18); transition:transform .12s ease,filter .12s ease,box-shadow .12s ease; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+.layer-menu-toggle:active { transform:translateY(1px) scale(.985); filter:brightness(.96); box-shadow:0 4px 12px rgba(15,23,42,.14),inset 0 1px 0 rgba(255,255,255,.64); }
+.layer-switch { display:none; flex-direction:column; gap:4px; min-width:112px; background:rgba(255,255,255,.82); border:1px solid rgba(255,255,255,.7); border-radius:14px; padding:6px; box-shadow:0 12px 30px rgba(15,23,42,.18),inset 0 1px 0 rgba(255,255,255,.68); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2); }
+.layer-menu.open .layer-switch { display:flex; }
+.layer-btn { width:100%; border:none; background:transparent; padding:8px 10px; border-radius:10px; font-size:13px; font-weight:600; color:#263248; cursor:pointer; transition:transform .12s ease,filter .12s ease,background .12s ease,color .12s ease; white-space:nowrap; text-align:left; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+.layer-btn.active { background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; box-shadow:0 6px 14px rgba(0,122,255,.18); }
 .layer-btn:active { transform:translateY(1px) scale(.985); filter:brightness(.96); }
 .target-pin { width:48px; height:48px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.18)); }
 .target-pin svg { display:block; width:48px; height:48px; overflow:visible; }
@@ -96,19 +102,23 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .target-pin .pin-fill { fill:url(#target-pin-red); }
 .target-pin .pin-core { fill:#fff; }
 .target-pin .pin-center { fill:#ff453a; }
-@media(max-width:480px) { :root { --shadow:0 10px 22px rgba(64,98,72,.13),0 1px 6px rgba(255,255,255,.58) inset; } #map { height:44vh; } .panel { padding:12px; } .card { border-radius:16px; padding:14px; } .action-card { padding:10px; } .action-row { gap:6px; } .action-row .btn { padding:11px 4px; } .layer-btn { padding:5px 7px; font-size:11px; } }
+@media(prefers-color-scheme:dark) { .map-wrap::after { background:linear-gradient(to bottom,rgba(24,34,28,0),rgba(24,34,28,.30) 32%,rgba(24,34,28,.70) 62%,rgba(24,34,28,.94) 100%); } .layer-menu-toggle,.layer-switch { background:rgba(28,32,38,.76); border-color:rgba(255,255,255,.18); color:#f5f7fa; box-shadow:0 12px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12); } .layer-btn { color:#f5f7fa; } }
+@media(max-width:480px) { :root { --shadow:0 10px 22px rgba(64,98,72,.13),0 1px 6px rgba(255,255,255,.58) inset; } #map { height:44vh; } .map-wrap::after { bottom:-48px; height:158px; } .panel { margin-top:-40px; padding:12px; } .card { border-radius:16px; padding:14px; } .action-card { padding:10px; } .action-row { gap:6px; } .action-row .btn { padding:11px 4px; } .layer-menu { top:8px; right:8px; } .layer-menu-toggle { padding:7px 11px; font-size:12px; } .layer-btn { padding:8px 10px; font-size:12px; } }
 </style>
 </head>
 <body>
-<div style="position:relative">
+<div class="map-wrap">
 <div id="map"></div>
-<div class="layer-switch">
-  <button class="layer-btn active" data-layer="satellite" onclick="switchLayer('satellite')">卫星</button>
+<div class="layer-menu" id="layerMenu">
+<button class="layer-menu-toggle" type="button" onclick="toggleLayerMenu()" aria-expanded="false" aria-controls="layerSwitch">图层：<span id="layerLabel">彩色</span></button>
+<div class="layer-switch" id="layerSwitch">
+  <button class="layer-btn" data-layer="satellite" onclick="switchLayer('satellite')">卫星</button>
   <button class="layer-btn" data-layer="wgs84" onclick="switchLayer('wgs84')">WGS84</button>
   <button class="layer-btn" data-layer="amap" onclick="switchLayer('amap')" title="高德为 GCJ-02 偏移图源，选点已自动换算回 WGS84">高德</button>
-  <button class="layer-btn" data-layer="voyager" onclick="switchLayer('voyager')">彩色</button>
+  <button class="layer-btn active" data-layer="voyager" onclick="switchLayer('voyager')">彩色</button>
   <button class="layer-btn" data-layer="standard" onclick="switchLayer('standard')">标准</button>
   <button class="layer-btn" data-layer="dark" onclick="switchLayer('dark')">暗色</button>
+</div>
 </div>
 </div>
 <div class="panel">
@@ -223,7 +233,7 @@ let layerIsGcj = false;
 function toDisplay(la, lo) { return layerIsGcj ? wgs84ToGcj02(la, lo) : { lat: la, lon: lo }; }
 function fromDisplay(la, lo) { return layerIsGcj ? gcj02ToWgs84(la, lo) : { lat: la, lon: lo }; }
 
-const map = L.map('map').setView([lat, lon], 13);
+const map = L.map('map', { attributionControl: false }).setView([lat, lon], 13);
 const tiles = {
   satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS'}),
   wgs84: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS WGS84'}),
@@ -232,8 +242,14 @@ const tiles = {
   amap: L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {maxZoom:18, subdomains:'1234', attribution:'\\u00a9 高德'}),
   voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {maxZoom:19, attribution:'\\u00a9 Carto'})
 };
-let currentLayer = tiles.satellite;
+let currentLayer = tiles.voyager;
 currentLayer.addTo(map);
+function toggleLayerMenu(force) {
+  const menu = document.getElementById('layerMenu');
+  const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
+  menu.classList.toggle('open', open);
+  document.querySelector('.layer-menu-toggle').setAttribute('aria-expanded', String(open));
+}
 function switchLayer(name) {
   map.removeLayer(currentLayer);
   currentLayer = tiles[name];
@@ -245,7 +261,14 @@ function switchLayer(name) {
   marker.setLatLng([d.lat, d.lon]);
   map.setView([d.lat, d.lon], map.getZoom());
   document.querySelectorAll('.layer-btn').forEach(b => b.classList.toggle('active', b.dataset.layer === name));
+  const active = document.querySelector('.layer-btn[data-layer="' + name + '"]');
+  if (active) document.getElementById('layerLabel').textContent = active.textContent.trim();
+  toggleLayerMenu(false);
 }
+document.addEventListener('click', e => {
+  const menu = document.getElementById('layerMenu');
+  if (menu && !menu.contains(e.target)) toggleLayerMenu(false);
+});
 const targetIcon = L.divIcon({
   className: 'target-pin-icon',
   html: '<div class="target-pin" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><defs><linearGradient id="target-pin-red" x1="10" y1="6" x2="38" y2="42" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff6b63"/><stop offset="0.48" stop-color="#ff453a"/><stop offset="1" stop-color="#ff3b30"/></linearGradient></defs><path class="pin-outline" d="M24 3C14.1 3 6 11.1 6 21c0 12.2 15.8 22.7 17.1 23.6.6.4 1.2.4 1.8 0C26.2 43.7 42 33.2 42 21 42 11.1 33.9 3 24 3Z"/><path class="pin-fill" d="M24 6C15.7 6 9 12.7 9 21c0 9.4 11.4 18.5 15 21.1C27.6 39.5 39 30.4 39 21 39 12.7 32.3 6 24 6Z"/><circle class="pin-core" cx="24" cy="21" r="9"/><circle class="pin-center" cx="24" cy="21" r="4"/></svg></div>',
