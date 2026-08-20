@@ -125,7 +125,6 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 </div>
 <div class="panel">
   <div class="error-banner" id="errorBanner">
-    <b>定位没有成功生效</b>
     请检查以下配置<br>
     1. 已启用Apple New模块<br>
     2. 已信任CA证书<br>
