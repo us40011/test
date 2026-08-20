@@ -135,7 +135,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
   </div>
   <div class="card dashboard-card">
     <h3>地图实时数据</h3>
-    <div class="coords" id="coords">经度 --  纬度 --</div>
+    <div class="coords" id="coords">每次定位在目标点随机移动 0=关闭</div>
     <label class="param-row">
       <span>移动半径 / 米</span>
       <input id="radiusInput" type="number" min="0" max="5000" step="1" value="0" />
@@ -152,7 +152,6 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
       <span>垂直精度</span>
       <input id="verticalAccuracyInput" type="number" min="0" step="1" value="1000" />
     </label>
-    <div class="coords">每次定位在目标点随机移动 0=关闭</div>
   </div>
   <div class="card action-card" aria-label="位置操作">
     <div class="action-row">
