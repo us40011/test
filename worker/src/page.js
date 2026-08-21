@@ -410,7 +410,7 @@ function loadFav(i) {
   const favs = getFavs();
   if (!favs[i]) return;
   moveTo(favs[i].lat, favs[i].lon, 15);
-  toast(favs[i].name + ' (' + favs[i].lon.toFixed(4) + ', ' + favs[i].lat.toFixed(4) + ')');
+  toast(favs[i].name);
 }
 
 function delFav(i) {
