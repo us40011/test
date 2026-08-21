@@ -174,8 +174,8 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
       <div class="value" id="activeValue">查询中...</div>
     </div>
     <div class="row">
-      <button class="btn btn-sm btn-secondary" onclick="queryActive()">刷新</button>
-      <button class="btn btn-sm btn-danger" onclick="clearActive()">清除数据</button>
+      <button class="btn btn-sm btn-secondary" onclick="queryActive()">更新</button>
+      <button class="btn btn-sm btn-danger" onclick="clearActive()">清空数据</button>
     </div>
   </div>
   <div class="card">
@@ -227,7 +227,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 if (typeof L === 'undefined') {
   document.getElementById('map').innerHTML =
     '<div style="padding:24px;text-align:center;font-size:14px;color:#8e8e93;line-height:1.6">' +
-    '地图库加载失败<br>unpkg.com 不可达, 请检查网络或代理后刷新<\\/div>';
+    '地图库加载失败<br>unpkg.com 不可达, 请检查网络或代理后更新<\\/div>';
   throw new Error('leaflet unavailable');
 }
 ${GCJ_BROWSER_JS}
@@ -492,12 +492,12 @@ async function clearActive() {
     .then(d => {
       if (d.success) {
         activeLon = null; activeLat = null;
-        setActiveText('已清除');
+        setActiveText('已清空');
         renderFavs();
-        toast('已清除设备坐标');
-      } else { toast('清除失败: ' + (d.error || ''), 3000); }
+        toast('已清空设备坐标');
+      } else { toast('清空失败: ' + (d.error || ''), 3000); }
     })
-    .catch(() => { toast('清除失败', 3000); });
+    .catch(() => { toast('清空失败', 3000); });
 }
 
 /* ---- Save to device ---- */
