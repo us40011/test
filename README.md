@@ -153,7 +153,7 @@ cd worker && npm install && npm test
 |------|------|--------|
 | longitude | 目标经度(在线选点优先) | null (透传) |
 | latitude | 目标纬度(在线选点优先) | null (透传) |
-| accuracy | 精度(米) | 25 |
+| accuracy | 精度(米) | 15 |
 | randomRadius | 扰动半径(米)，每次定位在目标点周围随机偏移，0=关闭 | 0 |
 | logLevel | 日志级别 | info |
 
