@@ -47,6 +47,9 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .input-row { display:flex; gap:8px; margin-top:10px; }
 .input-row input { flex:1; padding:11px 12px; border:1px solid rgba(255,255,255,.78); border-radius:12px; font-size:14px; outline:none; min-width:0; background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(238,248,231,.72)); color:#1c1c1e; box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 4px 12px rgba(32,68,138,.05); transition:border-color .12s ease,box-shadow .12s ease; }
 .input-row input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
+.param-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; font-size:13px; color:var(--gray); }
+.param-row input { width:80px; flex:none; padding:11px 12px; border:1px solid rgba(255,255,255,.78); border-radius:12px; font-size:14px; outline:none; min-width:0; background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(238,248,231,.72)); color:#1c1c1e; box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 4px 12px rgba(32,68,138,.05); transition:border-color .12s ease,box-shadow .12s ease; }
+.param-row input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .status { font-size:12px; color:var(--gray); margin-top:8px; text-align:center; }
 .error-banner { background:var(--red); color:#fff; padding:14px 16px; border-radius:12px; margin-bottom:12px; font-size:14px; line-height:1.5; display:none; }
 .error-banner b { display:block; margin-bottom:4px; }
@@ -133,11 +136,22 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
   <div class="card dashboard-card">
     <h3>地图实时数据</h3>
     <div class="coords" id="coords">每次定位在目标点随机移动 0=关闭</div>
-    <div class="input-row" style="margin-top:10px">
-      <label style="font-size:13px;color:var(--gray);display:flex;align-items:center;gap:6px;white-space:nowrap">移动半径 / 米
-        <input id="radiusInput" type="number" min="0" max="5000" step="1" value="0" style="width:80px;flex:none" />
-      </label>
-    </div>
+    <label class="param-row">
+      <span>移动半径 / 米</span>
+      <input id="radiusInput" type="number" min="0" max="5000" step="1" value="0" />
+    </label>
+    <label class="param-row">
+      <span>海拔度</span>
+      <input id="altitudeInput" type="number" step="1" placeholder="自动" />
+    </label>
+    <label class="param-row">
+      <span>水平精度</span>
+      <input id="horizontalAccuracyInput" type="number" min="0" step="1" value="25" />
+    </label>
+    <label class="param-row">
+      <span>垂直精度</span>
+      <input id="verticalAccuracyInput" type="number" min="0" step="1" value="1000" />
+    </label>
   </div>
   <div class="card action-card" aria-label="位置操作">
     <div class="action-row">
@@ -225,6 +239,7 @@ const FAV_KEY = 'wloc_favorites';
 let lat = 16.833909, lon = 112.328993;
 let selected = false;
 let activeLon = null, activeLat = null;
+let altitude = null;
 let layerIsGcj = false;
 
 // 高德瓦片画的是 GCJ-02 地物, 而 Leaflet 按 WGS84 算「像素 -> 经纬度」。所以在
@@ -293,6 +308,30 @@ function setPos(newLat, newLon) {
   const d = toDisplay(lat, lon);
   marker.setLatLng([d.lat, d.lon]);
   document.getElementById('coords').textContent = '经度 ' + lon.toFixed(6) + '  纬度 ' + lat.toFixed(6);
+  fetchElevation(lat, lon);
+}
+
+function readOptionalNumber(id) {
+  const value = document.getElementById(id).value.trim();
+  if (value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+async function fetchElevation(la, lo) {
+  try {
+    const r = await fetch('https://api.open-meteo.com/v1/elevation?latitude=' + encodeURIComponent(la) + '&longitude=' + encodeURIComponent(lo), { method:'GET', mode:'cors', cache:'no-store' });
+    if (!r.ok) throw new Error('elevation api failed');
+    const data = await r.json();
+    const list = data && data.elevation;
+    const value = Array.isArray(list) ? Number(list[0]) : Number(list);
+    if (Number.isFinite(value)) {
+      altitude = value;
+      document.getElementById('altitudeInput').value = Math.round(value);
+    }
+  } catch (e) {
+    console.warn('[elevation] failed', e);
+  }
 }
 
 function moveTo(newLat, newLon, zoom) {
@@ -407,9 +446,12 @@ async function clearAllFav() {
 function setActiveCoords(lo, la, opts) {
   const el = document.getElementById('activeValue');
   const accuracy = opts && opts.accuracy ? '<span class="coord-meta">精度 ' + opts.accuracy + 'm<\/span>' : '';
+  const altitudeText = opts && opts.altitude !== undefined && opts.altitude !== null ? '<span class="coord-meta">海拔 ' + opts.altitude + 'm<\/span>' : '';
+  const hAcc = opts && opts.horizontalAccuracy ? '<span class="coord-meta">水平 ' + opts.horizontalAccuracy + 'm<\/span>' : '';
+  const vAcc = opts && opts.verticalAccuracy ? '<span class="coord-meta">垂直 ' + opts.verticalAccuracy + 'm<\/span>' : '';
   const randomRadius = opts && opts.randomRadius ? '<span class="coord-meta">扰动 ' + opts.randomRadius + 'm<\/span>' : '';
   el.className = 'value coords-line';
-  el.innerHTML = '<span>经度 ' + lo.toFixed(6) + '<\/span><span>纬度 ' + la.toFixed(6) + '<\/span>' + accuracy + randomRadius;
+  el.innerHTML = '<span>经度 ' + lo.toFixed(6) + '<\/span><span>纬度 ' + la.toFixed(6) + '<\/span>' + accuracy + altitudeText + hAcc + vAcc + randomRadius;
 }
 function setActiveText(text) {
   const el = document.getElementById('activeValue');
@@ -426,8 +468,11 @@ function queryActive() {
         activeLon = parseFloat(d.longitude);
         activeLat = parseFloat(d.latitude);
         const rr = d.randomRadius || 0;
-        setActiveCoords(activeLon, activeLat, { accuracy: d.accuracy, randomRadius: rr });
+        setActiveCoords(activeLon, activeLat, { accuracy: d.accuracy, altitude: d.altitude, horizontalAccuracy: d.horizontalAccuracy, verticalAccuracy: d.verticalAccuracy, randomRadius: rr });
         document.getElementById('radiusInput').value = rr;
+        if (d.altitude !== undefined && d.altitude !== null) document.getElementById('altitudeInput').value = d.altitude;
+        if (d.horizontalAccuracy !== undefined && d.horizontalAccuracy !== null) document.getElementById('horizontalAccuracyInput').value = d.horizontalAccuracy;
+        if (d.verticalAccuracy !== undefined && d.verticalAccuracy !== null) document.getElementById('verticalAccuracyInput').value = d.verticalAccuracy;
         renderFavs();
       } else {
         activeLon = null; activeLat = null;
@@ -463,7 +508,14 @@ async function save() {
   showError(false);
   try {
     const radius = parseInt(document.getElementById('radiusInput').value) || 0;
-    const r = await fetch(SAVE_API + '?lon=' + lon + '&lat=' + lat + '&acc=25&randomRadius=' + radius, {
+    const alt = readOptionalNumber('altitudeInput');
+    const hAcc = readOptionalNumber('horizontalAccuracyInput');
+    const vAcc = readOptionalNumber('verticalAccuracyInput');
+    const params = new URLSearchParams({ lon: String(lon), lat: String(lat), acc: String(hAcc ?? 25), randomRadius: String(radius) });
+    if (alt !== null) params.set('altitude', String(alt));
+    if (hAcc !== null) params.set('horizontalAccuracy', String(hAcc));
+    if (vAcc !== null) params.set('verticalAccuracy', String(vAcc));
+    const r = await fetch(SAVE_API + '?' + params.toString(), {
       method: 'GET', mode: 'cors', cache: 'no-store'
     });
     const d = await r.json();
@@ -471,7 +523,7 @@ async function save() {
       activeLon = lon; activeLat = lat;
       btn.textContent = '\\u2713 已保存'; btn.className = 'btn btn-primary success';
       document.getElementById('status').textContent = '\\u2713 已写入: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
-      setActiveCoords(lon, lat, { accuracy: 25 });
+      setActiveCoords(lon, lat, { accuracy: hAcc ?? 25, altitude: alt, horizontalAccuracy: hAcc, verticalAccuracy: vAcc });
       renderFavs();
       toast('\\u2713 坐标已写入设备');
       setTimeout(() => { btn.textContent='保存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);
