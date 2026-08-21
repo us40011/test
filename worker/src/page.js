@@ -75,6 +75,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(15,23,42,.36); z-index:10000; display:none; align-items:center; justify-content:center; padding:20px; }
 .modal-overlay.show { display:flex; }
 .modal { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(235,247,229,.82)); border:1px solid rgba(255,255,255,.84); border-radius:24px; padding:22px; width:100%; max-width:340px; box-shadow:0 22px 58px rgba(36,58,40,.24); }
+.fav-modal { padding-top:24px; }
 .modal::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.65),transparent 44%),radial-gradient(circle at 20% 0%,rgba(0,122,255,.12),transparent 34%); }
 .modal > * { position:relative; z-index:1; }
 .modal-icon { width:46px; height:46px; border-radius:16px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; box-shadow:0 10px 24px rgba(0,122,255,.20); font-size:24px; }
@@ -203,9 +204,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 </div>
 <div class="toast" id="toast"></div>
 <div class="modal-overlay" id="favModal">
-  <div class="modal">
-    <div class="modal-icon">📍</div>
-    <h3>收藏此位置</h3>
+  <div class="modal fav-modal">
     <input id="favNameInput" placeholder="输入备注名称" maxlength="30" />
     <div class="modal-coords" id="favModalCoords"></div>
     <div class="modal-btns">
@@ -411,7 +410,7 @@ function loadFav(i) {
   const favs = getFavs();
   if (!favs[i]) return;
   moveTo(favs[i].lat, favs[i].lon, 15);
-  toast(favs[i].name + ' (' + favs[i].lon.toFixed(4) + ', ' + favs[i].lat.toFixed(4) + ')');
+  toast(favs[i].name);
 }
 
 function delFav(i) {
