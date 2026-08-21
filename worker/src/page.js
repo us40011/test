@@ -55,7 +55,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .error-banner b { display:block; margin-bottom:4px; }
 .toast { position:fixed; top:60px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.8); color:#fff; padding:10px 20px; border-radius:20px; font-size:14px; opacity:0; transition:opacity .3s; pointer-events:none; z-index:9999; max-width:90vw; text-align:center; }
 .toast.show { opacity:1; }
-.active-loc { background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(247,250,255,.54)); border:1px solid rgba(255,255,255,.7); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; }
+.active-loc { background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(238,248,231,.72)); border:1px solid rgba(255,255,255,.78); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 4px 12px rgba(32,68,138,.05); }
 .active-loc .label { font-size:11px; color:var(--gray); margin-bottom:4px; }
 .active-loc .value { font-family:"SF Mono",monospace; font-size:13px; }
 .active-loc .value.coords-line { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
