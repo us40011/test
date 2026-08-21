@@ -146,11 +146,11 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
     </label>
     <label class="param-row">
       <span>水平精度</span>
-      <input id="horizontalAccuracyInput" type="number" min="0" step="1" value="25" />
+      <input id="horizontalAccuracyInput" type="number" min="0" step="1" value="15" />
     </label>
     <label class="param-row">
       <span>垂直精度</span>
-      <input id="verticalAccuracyInput" type="number" min="0" step="1" value="1000" />
+      <input id="verticalAccuracyInput" type="number" min="0" step="1" value="30" />
     </label>
   </div>
   <div class="card action-card" aria-label="位置操作">
@@ -511,7 +511,7 @@ async function save() {
     const alt = readOptionalNumber('altitudeInput');
     const hAcc = readOptionalNumber('horizontalAccuracyInput');
     const vAcc = readOptionalNumber('verticalAccuracyInput');
-    const params = new URLSearchParams({ lon: String(lon), lat: String(lat), acc: String(hAcc ?? 25), randomRadius: String(radius) });
+    const params = new URLSearchParams({ lon: String(lon), lat: String(lat), acc: String(hAcc ?? 15), randomRadius: String(radius) });
     if (alt !== null) params.set('altitude', String(alt));
     if (hAcc !== null) params.set('horizontalAccuracy', String(hAcc));
     if (vAcc !== null) params.set('verticalAccuracy', String(vAcc));
@@ -523,7 +523,7 @@ async function save() {
       activeLon = lon; activeLat = lat;
       btn.textContent = '\\u2713 已保存'; btn.className = 'btn btn-primary success';
       document.getElementById('status').textContent = '\\u2713 已写入: ' + lon.toFixed(6) + ', ' + lat.toFixed(6) + ' \\u00b7 ' + new Date().toLocaleTimeString('zh-CN');
-      setActiveCoords(lon, lat, { accuracy: hAcc ?? 25, altitude: alt, horizontalAccuracy: hAcc, verticalAccuracy: vAcc });
+      setActiveCoords(lon, lat, { accuracy: hAcc ?? 15, altitude: alt, horizontalAccuracy: hAcc, verticalAccuracy: vAcc });
       renderFavs();
       toast('\\u2713 坐标已写入设备');
       setTimeout(() => { btn.textContent='保存到设备'; btn.className='btn btn-primary'; btn.disabled=false; }, 2500);

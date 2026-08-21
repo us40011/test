@@ -69,6 +69,6 @@ test("settings query defaults empty optional fields", async () => {
 
   assert.equal(body.success, true);
   assert.equal(body.altitude, 0);
-  assert.equal(body.horizontalAccuracy, 25);
-  assert.equal(body.verticalAccuracy, 1000);
+  assert.equal(body.horizontalAccuracy, 15);
+  assert.equal(body.verticalAccuracy, 30);
 });
