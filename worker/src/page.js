@@ -548,7 +548,7 @@ async function save() {
   } catch(e) {
     btn.textContent = '保存到设备'; btn.className = 'btn btn-primary'; btn.disabled = false;
     showError(true);
-    toast('\\u2717 保存失败', 4000);
+    toast('❌ 保存失败', 4000);
   }
 }
 
