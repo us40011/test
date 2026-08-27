@@ -31,7 +31,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 /* MapLibre 的 WebGL canvas 位于 Leaflet tile pane 中。即使禁用 MapLibre 的交互，
    canvas 仍可能成为移动端触摸事件的命中目标；让事件穿透到 Leaflet map 容器，保留
    原有的单指拖动、点击取点和 marker 拖动。 */
-.leaflet-gl-layer, .leaflet-gl-layer .maplibregl-canvas { pointer-events:none; }
+.leaflet-gl-layer, .leaflet-gl-layer .maplibregl-map, .leaflet-gl-layer .maplibregl-canvas-container, .leaflet-gl-layer .maplibregl-canvas { pointer-events:none!important; }
 .panel { position:relative; z-index:700; padding:16px; max-width:600px; margin:-46px auto 0; }
 .card { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(236,247,229,.72)); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); contain:layout paint style; transform:translateZ(0); }
 .card::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.82),transparent 38%),radial-gradient(circle at 16% 0%,rgba(255,255,255,.7),transparent 28%),linear-gradient(315deg,rgba(119,164,105,.12),transparent 42%); opacity:.9; }
@@ -290,6 +290,12 @@ function cartoVectorLayer(style) {
   });
   return layer;
 }
+function restoreLeafletTouch() {
+  // MapLibre 图层的 add 生命周期完成后再次恢复 Leaflet 的处理器。部分移动浏览器上，
+  // 适配器会在图层事件之后才更新容器，不能只依赖 layer 的 add 回调。
+  map.dragging.enable();
+  map.touchZoom.enable();
+}
 const tiles = {
   satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', satelliteTileOptions),
   wgs84: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS WGS84'}),
@@ -301,6 +307,7 @@ const tiles = {
 };
 let currentLayer = tiles.voyager;
 currentLayer.addTo(map);
+restoreLeafletTouch();
 function toggleLayerMenu(force) {
   const menu = document.getElementById('layerMenu');
   const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
@@ -311,6 +318,7 @@ function switchLayer(name) {
   map.removeLayer(currentLayer);
   currentLayer = tiles[name];
   currentLayer.addTo(map);
+  restoreLeafletTouch();
   layerIsGcj = (name === 'amap');
   // 底图坐标系变了, 同一个 WGS84 点对应的屏幕位置也就变了, marker 必须重摆,
   // 否则切换图层后它会停在旧图源的像素位置上, 看起来像是坐标被改掉了。
