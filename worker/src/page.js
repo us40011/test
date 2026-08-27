@@ -20,8 +20,9 @@ export function getPageHtml() {
 <style>
 :root { --blue:#1677c8; --green:#34c759; --red:#ff3b30; --gray:#7b8794; --bg:#edf5e9; --orange:#ff9500; --tg:#229ED9; --card:rgba(255,255,255,.78); --stroke:rgba(255,255,255,.86); --shadow:0 18px 42px rgba(64,98,72,.16),0 2px 8px rgba(255,255,255,.62) inset; --lift-shadow:0 10px 24px rgba(58,88,64,.14); }
 * { margin:0; padding:0; box-sizing:border-box; }
-html { width:100%; background:#dfeeda; scroll-behavior:auto; }
+html { width:100%; background:#dfeeda; scroll-behavior:auto; font-variant-numeric:normal; font-feature-settings:"zero" 0; }
 body { position:relative; overflow-x:hidden; width:100%; min-width:0; font-family:-apple-system,system-ui,"SF Pro","Helvetica Neue",sans-serif; background:#edf5e9 linear-gradient(145deg,#eef8e9 0%,#dcecd6 46%,#eff6df 100%); color:#1c1c1e; min-height:100vh; }
+button,input { font-family:inherit; }
 body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; background:radial-gradient(ellipse at 18% 8%,rgba(164,210,151,.42),transparent 34%),radial-gradient(ellipse at 84% 18%,rgba(123,187,156,.32),transparent 30%),radial-gradient(ellipse at 50% 88%,rgba(255,246,206,.38),transparent 38%),linear-gradient(145deg,rgba(255,255,255,.32),transparent 45%); transform:translateZ(0); }
 #map { display:block; height:50vh; width:100%; min-height:250px; background:#edf5e9; }
 .panel { position:relative; z-index:700; padding:16px; max-width:600px; margin:-46px auto 0; }
@@ -31,7 +32,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .dashboard-card::before { opacity:1; }
 .card > * { position:relative; z-index:1; }
 .card h3 { font-size:15px; font-weight:700; margin-bottom:10px; color:#1c1c1e; letter-spacing:.01em; }
-.coords { font-family:"SF Mono",monospace; font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(236,247,229,.68)); border:1px solid rgba(255,255,255,.82); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 6px 16px rgba(72,112,76,.08); }
+.coords { font-size:14px; color:#263248; padding:10px 12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(236,247,229,.68)); border:1px solid rgba(255,255,255,.82); border-radius:12px; word-break:break-all; box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 6px 16px rgba(72,112,76,.08); }
 .row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
 .action-card { padding:12px; }
 .action-row { display:flex; gap:8px; flex-wrap:nowrap; margin-top:0; }
@@ -57,7 +58,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .toast.show { opacity:1; }
 .active-loc { background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(238,248,231,.72)); border:1px solid rgba(255,255,255,.78); border-radius:12px; padding:10px 12px; font-size:13px; color:#263248; box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 4px 12px rgba(32,68,138,.05); }
 .active-loc .label { font-size:11px; color:var(--gray); margin-bottom:4px; }
-.active-loc .value { font-family:"SF Mono",monospace; font-size:13px; }
+.active-loc .value { font-size:13px; }
 .active-loc .value.coords-line { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 .active-loc .value .coord-meta { color:var(--gray); }
 .fav-list { max-height:240px; overflow-y:auto; }
@@ -65,7 +66,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .fav-item:active { transform:translateY(1px); filter:brightness(.97); }
 .fav-item .fav-info { flex:1; min-width:0; }
 .fav-item .fav-name { font-size:14px; font-weight:500; color:#333; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fav-item .fav-coords { font-size:11px; color:var(--gray); font-family:"SF Mono",monospace; margin-top:2px; display:flex; gap:10px; align-items:center; }
+.fav-item .fav-coords { font-size:11px; color:var(--gray); margin-top:2px; display:flex; gap:10px; align-items:center; }
 .fav-item .fav-active { font-size:10px; color:var(--green); font-weight:600; }
 .fav-item .fav-del { flex:none; width:28px; height:28px; border:none; border-radius:50%; background:transparent; color:var(--red); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
 .fav-item .fav-del:hover { background:rgba(255,59,48,.1); }
@@ -81,7 +82,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 .modal-icon { width:46px; height:46px; border-radius:16px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#007aff,#5856d6); color:#fff; box-shadow:0 10px 24px rgba(0,122,255,.20); font-size:24px; }
 .modal h3 { font-size:18px; font-weight:700; margin-bottom:10px; text-align:center; color:#1c1c1e; }
 .modal-desc { font-size:14px; line-height:1.55; color:#4b5563; text-align:center; margin-bottom:18px; }
-.modal-coords { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; font-size:12px; color:var(--gray); margin-bottom:12px; text-align:center; font-family:"SF Mono",monospace; }
+.modal-coords { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; font-size:12px; color:var(--gray); margin-bottom:12px; text-align:center; }
 .modal input { width:100%; padding:12px; border:1px solid rgba(255,255,255,.78); border-radius:14px; font-size:15px; outline:none; margin-bottom:12px; background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(238,248,231,.74)); box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
 .modal input:focus { border-color:rgba(0,122,255,.72); box-shadow:0 0 0 3px rgba(0,122,255,.14),inset 0 1px 0 rgba(255,255,255,.8); }
 .modal .modal-btns { display:flex; gap:10px; }
@@ -196,7 +197,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
     <img class="footer-logo" id="footerLogo" src="https://raw.githubusercontent.com/us40011/test/main/gps.png" alt="Logo" onerror="this.onerror=null; this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';">
     <div id="fallbackLogo" style="display:none; width:96px; height:96px; border-radius:20px; margin:0 auto 12px; background:linear-gradient(135deg, #007aff, #5856d6); box-shadow:0 4px 16px rgba(0, 122, 255, 0.25); align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:22px;">W</div>
     <div style="font-weight:600;font-size:15px;color:#1c1c1e;margin-bottom:4px">澳门银河科技</div>
-    <div style="font-size:12px;color:var(--gray);margin-bottom:14px;font-family:monospace;font-weight:700;">版本号 v2.0</div>
+    <div style="font-size:12px;color:var(--gray);margin-bottom:14px;font-weight:700;">版本号 v2.0</div>
     <a class="btn btn-tg" href="https://t.me/VIP111177" target="_blank" rel="noopener">Telegram</a>
   </div>
   <div class="status" id="status">选好位置后点击「保存到设备」写入代理工具</div>
