@@ -235,7 +235,7 @@ const FAV_KEY = 'wloc_favorites';
 // lat/lon 恒为 WGS84 —— 这是写进设备、也是 wloc 唯一认的坐标系。
 // 底图可能是 GCJ-02 图源, 屏幕上的经纬度与它并不相等, 换算集中在 toDisplay/
 // fromDisplay 两个函数里, 其它地方一律不碰。
-let lat = 31.239280, lon = 121.497020;
+let lat = 31.240159, lon = 121.491784;
 let selected = false;
 let activeLon = null, activeLat = null;
 let altitude = null;
