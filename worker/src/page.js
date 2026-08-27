@@ -248,8 +248,24 @@ function toDisplay(la, lo) { return layerIsGcj ? wgs84ToGcj02(la, lo) : { lat: l
 function fromDisplay(la, lo) { return layerIsGcj ? gcj02ToWgs84(la, lo) : { lat: la, lon: lo }; }
 
 const map = L.map('map', { attributionControl: false }).setView([lat, lon], 13);
+// ArcGIS 返回的是 256px 的栅格瓦片。普通移动页面里，一个 256 CSS px 瓦片在
+// 2x/3x iPhone 上会被放大到 512/768 个物理像素，所以即使网络已加载完成仍会发糊。
+// 不使用 Leaflet 的 detectRetina（它只有 2x 档），而是按实际 DPR 请求更高一级/两级
+// 的 zoom，并以更小的 CSS 尺寸铺回当前地图 zoom：
+//   DPR 1 -> z     / 256 CSS px；DPR 2 -> z+1 / 128 CSS px；DPR 3 -> z+2 / 64 CSS px。
+// 这样 iPhone 的卫星图不会由低分辨率瓦片放大得到。World_Imagery 的原生层级足以
+// 覆盖这里最高的 z+2 请求；maxNativeZoom 也避免 Leaflet 在更高层级继续请求不存在的图块。
+const satelliteTileZoomOffset = window.devicePixelRatio >= 3 ? 2 : window.devicePixelRatio > 1 ? 1 : 0;
+const satelliteTileSize = 256 / Math.pow(2, satelliteTileZoomOffset);
+const satelliteTileOptions = {
+  tileSize: satelliteTileSize,
+  zoomOffset: satelliteTileZoomOffset,
+  maxNativeZoom: 23,
+  maxZoom: 19,
+  attribution: 'ArcGIS'
+};
 const tiles = {
-  satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS'}),
+  satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', satelliteTileOptions),
   wgs84: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS WGS84'}),
   standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'\\u00a9 OSM'}),
   dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_2b4m_1_e28b181cee1a1b7969fc0bb3', {maxZoom:19, attribution:'\\u00a9 Carto'}),
