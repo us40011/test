@@ -8,6 +8,8 @@
     "pages:deploy": "npx wrangler pages deploy -c wrangler.pages.jsonc"
   },
   "dependencies": {
-    "hono": "^4.10.6"
+    "@maplibre/maplibre-gl-leaflet": "^0.0.22",
+    "hono": "^4.10.6",
+    "maplibre-gl": "^5.0.0"
   }
 }

@@ -17,6 +17,9 @@ export function getPageHtml() {
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"><\/script>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" crossorigin="anonymous"/>
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js" crossorigin="anonymous"><\/script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js" crossorigin="anonymous"><\/script>
 <style>
 :root { --blue:#1677c8; --green:#34c759; --red:#ff3b30; --gray:#7b8794; --bg:#edf5e9; --orange:#ff9500; --tg:#229ED9; --card:rgba(255,255,255,.78); --stroke:rgba(255,255,255,.86); --shadow:0 18px 42px rgba(64,98,72,.16),0 2px 8px rgba(255,255,255,.62) inset; --lift-shadow:0 10px 24px rgba(58,88,64,.14); }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -122,6 +125,7 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
   <button class="layer-btn" data-layer="wgs84" onclick="switchLayer('wgs84')">WGS84</button>
   <button class="layer-btn" data-layer="amap" onclick="switchLayer('amap')" title="高德为 GCJ-02 偏移图源，选点已自动换算回 WGS84">高德</button>
   <button class="layer-btn active" data-layer="voyager" onclick="switchLayer('voyager')">彩色</button>
+  <button class="layer-btn" data-layer="positron" onclick="switchLayer('positron')">浅色</button>
   <button class="layer-btn" data-layer="standard" onclick="switchLayer('standard')">标准</button>
   <button class="layer-btn" data-layer="dark" onclick="switchLayer('dark')">暗色</button>
 </div>
@@ -223,11 +227,11 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
   </div>
 </div>
 <script>
-if (typeof L === 'undefined') {
+if (typeof L === 'undefined' || typeof L.maplibreGL !== 'function') {
   document.getElementById('map').innerHTML =
     '<div style="padding:24px;text-align:center;font-size:14px;color:#8e8e93;line-height:1.6">' +
     '地图库加载失败<br>unpkg.com 不可达, 请检查网络或代理后更新<\\/div>';
-  throw new Error('leaflet unavailable');
+  throw new Error('leaflet or maplibre unavailable');
 }
 ${GCJ_BROWSER_JS}
 const SAVE_API = 'https://gs-loc.apple.com/wloc-settings/save';
@@ -269,9 +273,10 @@ const tiles = {
   satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', satelliteTileOptions),
   wgs84: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS WGS84'}),
   standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'\\u00a9 OSM'}),
-  dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_2b4m_1_e28b181cee1a1b7969fc0bb3', {maxZoom:19, attribution:'\\u00a9 Carto'}),
+  dark: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'}),
   amap: L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {maxZoom:18, subdomains:'1234', attribution:'\\u00a9 高德'}),
-  voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_2b4m_1_e28b181cee1a1b7969fc0bb3', {maxZoom:19, attribution:'\\u00a9 Carto'})
+  voyager: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'}),
+  positron: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'})
 };
 let currentLayer = tiles.voyager;
 currentLayer.addTo(map);
