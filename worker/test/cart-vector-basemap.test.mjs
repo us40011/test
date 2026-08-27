@@ -8,6 +8,7 @@ test("CARTO basemaps use MapLibre vector styles through the Leaflet layer adapte
 
   assert.match(html, /maplibre-gl@5\/dist\/maplibre-gl\.css/);
   assert.match(html, /@maplibre\/maplibre-gl-leaflet@0\.0\.22\/leaflet-maplibre-gl\.js/);
+  assert.match(html, /\.leaflet-gl-layer, \.leaflet-gl-layer \.maplibregl-canvas \{ pointer-events:none; \}/);
   assert.match(html, /dark: L\.maplibreGL\(\{style:'https:\/\/basemaps\.cartocdn\.com\/gl\/dark-matter-gl-style\/style\.json', interactive:false\}\)/);
   assert.match(html, /voyager: L\.maplibreGL\(\{style:'https:\/\/basemaps\.cartocdn\.com\/gl\/voyager-gl-style\/style\.json', interactive:false\}\)/);
   assert.match(html, /positron: L\.maplibreGL\(\{style:'https:\/\/basemaps\.cartocdn\.com\/gl\/positron-gl-style\/style\.json', interactive:false\}\)/);

@@ -28,6 +28,10 @@ body { position:relative; overflow-x:hidden; width:100%; min-width:0; font-famil
 button,input { font-family:inherit; }
 body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; background:radial-gradient(ellipse at 18% 8%,rgba(164,210,151,.42),transparent 34%),radial-gradient(ellipse at 84% 18%,rgba(123,187,156,.32),transparent 30%),radial-gradient(ellipse at 50% 88%,rgba(255,246,206,.38),transparent 38%),linear-gradient(145deg,rgba(255,255,255,.32),transparent 45%); transform:translateZ(0); }
 #map { display:block; height:50vh; width:100%; min-height:250px; background:#edf5e9; }
+/* MapLibre 的 WebGL canvas 位于 Leaflet tile pane 中。即使禁用 MapLibre 的交互，
+   canvas 仍可能成为移动端触摸事件的命中目标；让事件穿透到 Leaflet map 容器，保留
+   原有的单指拖动、点击取点和 marker 拖动。 */
+.leaflet-gl-layer, .leaflet-gl-layer .maplibregl-canvas { pointer-events:none; }
 .panel { position:relative; z-index:700; padding:16px; max-width:600px; margin:-46px auto 0; }
 .card { position:relative; overflow:hidden; background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(236,247,229,.72)); border:1px solid var(--stroke); border-radius:18px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); contain:layout paint style; transform:translateZ(0); }
 .card::before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(135deg,rgba(255,255,255,.82),transparent 38%),radial-gradient(circle at 16% 0%,rgba(255,255,255,.7),transparent 28%),linear-gradient(315deg,rgba(119,164,105,.12),transparent 42%); opacity:.9; }
