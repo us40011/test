@@ -273,16 +273,31 @@ const satelliteTileOptions = {
   maxZoom: 19,
   attribution: 'ArcGIS'
 };
+function cartoVectorLayer(style) {
+  const layer = L.maplibreGL({style, interactive:false});
+  layer.on('add', () => {
+    // 适配器创建 MapLibre 实例后再明确关闭它的手势处理，并恢复 Leaflet 的拖动。
+    // 这避免不同版本适配器在 onAdd 中重置 Leaflet dragging 后只剩双指手势。
+    const glMap = layer.getMaplibreMap();
+    glMap.dragPan.disable();
+    glMap.touchZoomRotate.disable();
+    glMap.doubleClickZoom.disable();
+    glMap.scrollZoom.disable();
+    glMap.boxZoom.disable();
+    glMap.keyboard.disable();
+    map.dragging.enable();
+    map.touchZoom.enable();
+  });
+  return layer;
+}
 const tiles = {
   satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', satelliteTileOptions),
   wgs84: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS WGS84'}),
   standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'\\u00a9 OSM'}),
-  // 关闭 MapLibre 自己的手势处理，让触摸事件继续由 Leaflet 接管。否则矢量画布会
-  // 启用 MapLibre 的移动端手势识别，覆盖 Leaflet 原有的单指拖动行为。
-  dark: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', interactive:false}),
+  dark: cartoVectorLayer('https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'),
   amap: L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {maxZoom:18, subdomains:'1234', attribution:'\\u00a9 高德'}),
-  voyager: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json', interactive:false}),
-  positron: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', interactive:false})
+  voyager: cartoVectorLayer('https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'),
+  positron: cartoVectorLayer('https://basemaps.cartocdn.com/gl/positron-gl-style/style.json')
 };
 let currentLayer = tiles.voyager;
 currentLayer.addTo(map);
