@@ -273,10 +273,12 @@ const tiles = {
   satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', satelliteTileOptions),
   wgs84: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'ArcGIS WGS84'}),
   standard: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'\\u00a9 OSM'}),
-  dark: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'}),
+  // 关闭 MapLibre 自己的手势处理，让触摸事件继续由 Leaflet 接管。否则矢量画布会
+  // 启用 MapLibre 的移动端手势识别，覆盖 Leaflet 原有的单指拖动行为。
+  dark: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', interactive:false}),
   amap: L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {maxZoom:18, subdomains:'1234', attribution:'\\u00a9 高德'}),
-  voyager: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'}),
-  positron: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'})
+  voyager: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json', interactive:false}),
+  positron: L.maplibreGL({style:'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', interactive:false})
 };
 let currentLayer = tiles.voyager;
 currentLayer.addTo(map);
