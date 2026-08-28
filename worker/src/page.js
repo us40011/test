@@ -116,12 +116,12 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index
 <div class="map-wrap">
 <div id="map"></div>
 <div class="layer-menu" id="layerMenu">
-<button class="layer-menu-toggle" type="button" onclick="toggleLayerMenu()" aria-expanded="false" aria-controls="layerSwitch">图层：<span id="layerLabel">彩色</span></button>
+<button class="layer-menu-toggle" type="button" onclick="toggleLayerMenu()" aria-expanded="false" aria-controls="layerSwitch">图层：<span id="layerLabel">卫星</span></button>
 <div class="layer-switch" id="layerSwitch">
-  <button class="layer-btn" data-layer="satellite" onclick="switchLayer('satellite')">卫星</button>
+  <button class="layer-btn active" data-layer="satellite" onclick="switchLayer('satellite')">卫星</button>
   <button class="layer-btn" data-layer="wgs84" onclick="switchLayer('wgs84')">WGS84</button>
   <button class="layer-btn" data-layer="amap" onclick="switchLayer('amap')" title="高德为 GCJ-02 偏移图源，选点已自动换算回 WGS84">高德</button>
-  <button class="layer-btn active" data-layer="voyager" onclick="switchLayer('voyager')">彩色</button>
+  <button class="layer-btn" data-layer="voyager" onclick="switchLayer('voyager')">彩色</button>
   <button class="layer-btn" data-layer="standard" onclick="switchLayer('standard')">标准</button>
   <button class="layer-btn" data-layer="dark" onclick="switchLayer('dark')">暗色</button>
 </div>
@@ -273,7 +273,7 @@ const tiles = {
   amap: L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {maxZoom:18, subdomains:'1234', attribution:'\\u00a9 高德'}),
   voyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_2b4m_1_e28b181cee1a1b7969fc0bb3', {maxZoom:19, attribution:'\\u00a9 Carto'})
 };
-let currentLayer = tiles.voyager;
+let currentLayer = tiles.satellite;
 currentLayer.addTo(map);
 function toggleLayerMenu(force) {
   const menu = document.getElementById('layerMenu');
