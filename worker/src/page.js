@@ -254,14 +254,16 @@ const map = L.map('map', { attributionControl: false }).setView([lat, lon], 13);
 // 不使用 Leaflet 的 detectRetina（它只有 2x 档），而是按实际 DPR 请求更高一级/两级
 // 的 zoom，并以更小的 CSS 尺寸铺回当前地图 zoom：
 //   DPR 1 -> z     / 256 CSS px；DPR 2 -> z+1 / 128 CSS px；DPR 3 -> z+2 / 64 CSS px。
-// 这样 iPhone 的卫星图不会由低分辨率瓦片放大得到。World_Imagery 的原生层级足以
-// 覆盖这里最高的 z+2 请求；maxNativeZoom 也避免 Leaflet 在更高层级继续请求不存在的图块。
+// 这样 iPhone 的卫星图不会由低分辨率瓦片放大得到。World_Imagery 在部分区域只提供到
+// z19；超过该层级会返回带有 “Map data not yet available” 的灰色占位图。因此将数据层级
+// 钳制到 z19：高分屏仍会优先取更精细的瓦片，而到达可用数据边界后 Leaflet 放大最后一层，
+// 不再请求不存在的瓦片。maxZoom 同时让 Leaflet 在上限处保持其默认的缩放回弹行为。
 const satelliteTileZoomOffset = window.devicePixelRatio >= 3 ? 2 : window.devicePixelRatio > 1 ? 1 : 0;
 const satelliteTileSize = 256 / Math.pow(2, satelliteTileZoomOffset);
 const satelliteTileOptions = {
   tileSize: satelliteTileSize,
   zoomOffset: satelliteTileZoomOffset,
-  maxNativeZoom: 23,
+  maxNativeZoom: 19,
   maxZoom: 19,
   attribution: 'ArcGIS'
 };

@@ -12,6 +12,7 @@ test("satellite tiles request a source zoom that matches iPhone pixel density", 
   assert.match(html, /window\.devicePixelRatio >= 3 \? 2 : window\.devicePixelRatio > 1 \? 1 : 0/);
   assert.match(html, /tileSize: satelliteTileSize/);
   assert.match(html, /zoomOffset: satelliteTileZoomOffset/);
-  assert.match(html, /maxNativeZoom: 23/);
+  assert.match(html, /maxNativeZoom: 19/);
+  assert.match(html, /maxZoom: 19/);
   assert.match(html, /World_Imagery\/MapServer\/tile\/\{z\}\/\{y\}\/\{x\}', satelliteTileOptions/);
 });
