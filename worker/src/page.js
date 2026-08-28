@@ -248,21 +248,24 @@ let layerIsGcj = false;
 function toDisplay(la, lo) { return layerIsGcj ? wgs84ToGcj02(la, lo) : { lat: la, lon: lo }; }
 function fromDisplay(la, lo) { return layerIsGcj ? gcj02ToWgs84(la, lo) : { lat: la, lon: lo }; }
 
-const map = L.map('map', { attributionControl: false }).setView([lat, lon], 13);
+const map = L.map('map', { attributionControl: false, bounceAtZoomLimits: true }).setView([lat, lon], 13);
 // ArcGIS 返回的是 256px 的栅格瓦片。普通移动页面里，一个 256 CSS px 瓦片在
 // 2x/3x iPhone 上会被放大到 512/768 个物理像素，所以即使网络已加载完成仍会发糊。
 // 不使用 Leaflet 的 detectRetina（它只有 2x 档），而是按实际 DPR 请求更高一级/两级
 // 的 zoom，并以更小的 CSS 尺寸铺回当前地图 zoom：
 //   DPR 1 -> z     / 256 CSS px；DPR 2 -> z+1 / 128 CSS px；DPR 3 -> z+2 / 64 CSS px。
-// 这样 iPhone 的卫星图不会由低分辨率瓦片放大得到。World_Imagery 的原生层级足以
-// 覆盖这里最高的 z+2 请求；maxNativeZoom 也避免 Leaflet 在更高层级继续请求不存在的图块。
+// 这样 iPhone 的卫星图不会由低分辨率瓦片放大得到。影像覆盖层级因区域而异，不能把所有
+// 地方一律截到 z19，否则会丢失本来存在的高精度影像。下面会通过 ArcGIS 的 tilemap 接口
+// 按当前位置探测最高可用层级；maxNativeZoom 保留服务的最高层级，避免限制有数据区域。
 const satelliteTileZoomOffset = window.devicePixelRatio >= 3 ? 2 : window.devicePixelRatio > 1 ? 1 : 0;
 const satelliteTileSize = 256 / Math.pow(2, satelliteTileZoomOffset);
+const satelliteMaxNativeZoom = 23;
+const satelliteMaxZoom = 19;
 const satelliteTileOptions = {
   tileSize: satelliteTileSize,
   zoomOffset: satelliteTileZoomOffset,
-  maxNativeZoom: 23,
-  maxZoom: 19,
+  maxNativeZoom: satelliteMaxNativeZoom,
+  maxZoom: satelliteMaxZoom,
   attribution: 'ArcGIS'
 };
 const tiles = {
@@ -275,6 +278,62 @@ const tiles = {
 };
 let currentLayer = tiles.satellite;
 currentLayer.addTo(map);
+
+// World_Imagery 对没有影像的瓦片返回 HTTP 200 的灰色图片，tileerror 无法识别它。
+// tilemap 则会直接给出该瓦片是否存在；探测当前可视范围内的全部瓦片，并将地图缩放
+// 上限换算回 Leaflet 的显示 zoom（需扣除高分屏使用的 source zoom offset）。
+const satelliteTileMapUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tilemap';
+let satelliteProbeVersion = 0;
+const satelliteAvailabilityCache = new Map();
+function satelliteTileRangeKey(zoom) {
+  // 检查“把当前中心放大到该 source zoom”时的可视范围，而不是把当前较低 zoom 的
+  // 大范围地理区域直接投影到高层级（后者会产生数百个不必要的 tilemap 请求）。
+  const center = map.project(map.getCenter(), zoom);
+  const size = map.getSize();
+  const sourceScale = Math.pow(2, satelliteTileZoomOffset);
+  const halfWidth = size.x * sourceScale / 2;
+  const halfHeight = size.y * sourceScale / 2;
+  const minX = Math.floor((center.x - halfWidth) / 256);
+  const minY = Math.floor((center.y - halfHeight) / 256);
+  const maxX = Math.floor((center.x + halfWidth) / 256);
+  const maxY = Math.floor((center.y + halfHeight) / 256);
+  return zoom + '/' + minY + '/' + minX + '/' + (maxX - minX + 1) + '/' + (maxY - minY + 1);
+}
+async function hasSatelliteTiles(zoom) {
+  const key = satelliteTileRangeKey(zoom);
+  if (satelliteAvailabilityCache.has(key)) return satelliteAvailabilityCache.get(key);
+  const parts = key.split('/');
+  const request = fetch(satelliteTileMapUrl + '/' + parts[0] + '/' + parts[1] + '/' + parts[2] + '/' + parts[3] + '/' + parts[4] + '?f=json', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    // 空 data 也表示没有可用瓦片；Array#every 在空数组上会返回 true，若不单独判断，
+    // 就会把无数据区域误判为可放大，随后短暂显示 ArcGIS 的灰色占位瓦片。
+    .then(data => data && Array.isArray(data.data) && data.data.length > 0 ? data.data.every(Boolean) : false)
+    .catch(() => null);
+  satelliteAvailabilityCache.set(key, request);
+  return request;
+}
+async function limitSatelliteZoomToAvailableData() {
+  if (currentLayer !== tiles.satellite) return;
+  const version = ++satelliteProbeVersion;
+  let sourceZoom = satelliteMaxZoom + satelliteTileZoomOffset;
+  while (sourceZoom > satelliteTileZoomOffset) {
+    const available = await hasSatelliteTiles(sourceZoom);
+    if (version !== satelliteProbeVersion || currentLayer !== tiles.satellite) return;
+    if (available === null) return; // 探测失败时维持既有行为，不能因网络问题错误限制地图。
+    if (available) break;
+    sourceZoom -= 1;
+  }
+  const availableMaxZoom = Math.max(0, Math.min(satelliteMaxZoom, sourceZoom - satelliteTileZoomOffset));
+  map.setMaxZoom(availableMaxZoom);
+  // 正常情况下上限已在用户继续缩放前更新。若用户在探测请求尚未完成时完成了操作，
+  // 立即回到最后有效级别，不让灰色占位瓦片参与回弹动画。
+  if (map.getZoom() > availableMaxZoom) {
+    map.stop();
+    map.setZoom(availableMaxZoom, { animate: false });
+  }
+}
+map.on('moveend', limitSatelliteZoomToAvailableData);
+limitSatelliteZoomToAvailableData();
 function toggleLayerMenu(force) {
   const menu = document.getElementById('layerMenu');
   const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
@@ -285,6 +344,7 @@ function switchLayer(name) {
   map.removeLayer(currentLayer);
   currentLayer = tiles[name];
   currentLayer.addTo(map);
+  map.setMaxZoom(currentLayer.options.maxZoom);
   layerIsGcj = (name === 'amap');
   // 底图坐标系变了, 同一个 WGS84 点对应的屏幕位置也就变了, marker 必须重摆,
   // 否则切换图层后它会停在旧图源的像素位置上, 看起来像是坐标被改掉了。
@@ -295,6 +355,7 @@ function switchLayer(name) {
   const active = document.querySelector('.layer-btn[data-layer="' + name + '"]');
   if (active) document.getElementById('layerLabel').textContent = active.textContent.trim();
   toggleLayerMenu(false);
+  if (name === 'satellite') limitSatelliteZoomToAvailableData();
 }
 document.addEventListener('click', e => {
   const menu = document.getElementById('layerMenu');
